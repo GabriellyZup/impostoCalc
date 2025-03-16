@@ -4,20 +4,24 @@ import com.impostoCalc.dtos.TaxTypeRequestDTO;
 import com.impostoCalc.dtos.TaxTypeResponseDTO;
 import com.impostoCalc.model.TaxType;
 import com.impostoCalc.repository.TaxTypeRepository;
+import com.impostoCalc.repository.CustomTaxTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class TaxTypeService {
 
     private final TaxTypeRepository taxTypeRepository;
+    private final CustomTaxTypeRepository customTaxTypeRepository;
 
     @Autowired
-    public TaxTypeService(TaxTypeRepository taxTypeRepository) {
+    public TaxTypeService(TaxTypeRepository taxTypeRepository, CustomTaxTypeRepository customTaxTypeRepository) {
         this.taxTypeRepository = taxTypeRepository;
+        this.customTaxTypeRepository = customTaxTypeRepository;
     }
 
     public List<TaxTypeResponseDTO> getAllTaxTypes() {
@@ -47,6 +51,12 @@ public class TaxTypeService {
             throw new RuntimeException("Tipo de imposto não encontrado.");
         }
         taxTypeRepository.deleteById(id);
+    }
+
+    public TaxTypeResponseDTO getTaxTypeByName(String name) {
+        TaxType taxType = customTaxTypeRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("Tipo de imposto não encontrado com o nome fornecido."));
+        return toResponseDTO(taxType);
     }
 
     private TaxTypeResponseDTO toResponseDTO(TaxType taxType) {
