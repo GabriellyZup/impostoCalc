@@ -21,9 +21,10 @@ public class User {
     @Schema(description = "Senha do usuário.", example = "senhaSegura")
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Schema(description = "Papel do usuário no sistema.", example = "USER")
-    private String role;
+    private Role role;
 
     public Integer getId() {
         return id;
@@ -49,11 +50,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
