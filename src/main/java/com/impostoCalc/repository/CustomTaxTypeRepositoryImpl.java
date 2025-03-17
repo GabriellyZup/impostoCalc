@@ -1,4 +1,4 @@
-package com.impostoCalc.repository.impl;
+package com.impostoCalc.repository;
 
 import com.impostoCalc.model.TaxType;
 import com.impostoCalc.repository.CustomTaxTypeRepository;
@@ -16,10 +16,10 @@ public class CustomTaxTypeRepositoryImpl implements CustomTaxTypeRepository {
     private EntityManager entityManager;
 
     @Override
-    public Optional<TaxType> findByName(String name) {
-        String jpql = "SELECT t FROM TaxType t WHERE t.nome = :name";
+    public Optional<TaxType> findByName(String nome) {
+        String jpql = "SELECT t FROM TaxType t WHERE t.nome = :nome";
         TypedQuery<TaxType> query = entityManager.createQuery(jpql, TaxType.class);
-        query.setParameter("name", name);
+        query.setParameter("nome", nome);
 
         return query.getResultStream().findFirst();
     }

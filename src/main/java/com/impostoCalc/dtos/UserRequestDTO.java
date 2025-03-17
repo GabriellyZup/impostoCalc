@@ -1,17 +1,24 @@
 package com.impostoCalc.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Schema(description = "Objeto de requisição para registrar ou autenticar um usuário.")
 public class UserRequestDTO {
 
-    @Schema(description = "Nome de usuário único.", example = "usuario123", required = true)
+    @NotBlank(message = "O nome de usuário é obrigatório.")
+    @Size(min = 3, max = 50, message = "O nome de usuário deve ter entre 3 e 50 caracteres.")
+    @Schema(description = "Nome de usuário para autenticação.", example = "usuario123", required = true)
     private String username;
 
-    @Schema(description = "Senha do usuário.", example = "senhaSegura", required = true)
+    @NotBlank(message = "A senha é obrigatória.")
+    @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres.")
+    @Schema(description = "Senha do usuário.", example = "senhaSegura123", required = true)
     private String password;
 
-    @Schema(description = "Papel do usuário no sistema.", example = "USER", required = true)
+    @NotBlank(message = "O papel do usuário é obrigatório.")
+    @Schema(description = "Papel do usuário no sistema.", example = "ADMIN", required = true)
     private String role;
 
     public String getUsername() {
