@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -30,7 +31,8 @@ class TaxTypeControllerTest {
     }
 
     @Test
-    void testGetAllTaxTypes() {
+    @WithMockUser(roles = "USER")
+    void testGetAllTaxTypes_AsUser() {
         // Arrange
         TaxTypeResponseDTO taxType1 = new TaxTypeResponseDTO();
         taxType1.setId(1);
@@ -58,7 +60,8 @@ class TaxTypeControllerTest {
     }
 
     @Test
-    void testCreateTaxType() {
+    @WithMockUser(roles = "ADMIN")
+    void testCreateTaxType_AsAdmin() {
         // Arrange
         TaxTypeRequestDTO request = new TaxTypeRequestDTO();
         request.setNome("ICMS");
@@ -80,5 +83,26 @@ class TaxTypeControllerTest {
         assertEquals(201, result.getStatusCodeValue());
         assertEquals(response, result.getBody());
         verify(taxTypeService, times(1)).createTaxType(request);
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void testCreateTaxType_AsUser() {
+        // Arrange
+        TaxTypeRequestDTO request = new TaxTypeRequestDTO();
+        request.setNome("ICMS");
+        request.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
+        request.setAliquota(BigDecimal.valueOf(18.0));
+
+        // Act & Assert
+        try {
+            taxTypeController.createTaxType(request);
+        } catch (Exception e) {
+            // Simula o comportamento esperado para usuários sem permissão
+            assertEquals("Access is denied", e.getMessage());
+        }
+
+        // Verifica que o serviço não foi chamado
+        verify(taxTypeService, times(0)).createTaxType(request);
     }
 }
