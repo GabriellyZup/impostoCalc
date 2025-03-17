@@ -1,5 +1,6 @@
 package com.impostoCalc.dtos;
 
+import com.impostoCalc.model.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Objeto de resposta para os detalhes de um usuário.")
@@ -12,7 +13,7 @@ public class UserResponseDTO {
     private String username;
 
     @Schema(description = "Papel do usuário no sistema.", example = "USER")
-    private String role;
+    private Role role;
 
     public Integer getId() {
         return id;
@@ -30,11 +31,11 @@ public class UserResponseDTO {
         this.username = username;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

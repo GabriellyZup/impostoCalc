@@ -1,4 +1,6 @@
 package com.impostoCalc.model;
 
-public class Role {
+public enum Role {
+    USER,
+    ADMIN
 }
