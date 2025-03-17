@@ -1,5 +1,6 @@
 package com.impostoCalc.dtos;
 
+import com.impostoCalc.model.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,9 +18,8 @@ public class UserRequestDTO {
     @Schema(description = "Senha do usuário.", example = "senhaSegura123", required = true)
     private String password;
 
-    @NotBlank(message = "O papel do usuário é obrigatório.")
     @Schema(description = "Papel do usuário no sistema.", example = "ADMIN", required = true)
-    private String role;
+    private Role role;
 
     public String getUsername() {
         return username;
@@ -37,11 +37,11 @@ public class UserRequestDTO {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
