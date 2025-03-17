@@ -1,5 +1,6 @@
 package com.impostoCalc.model.test;
 
+import com.impostoCalc.model.Role;
 import com.impostoCalc.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ class UserTest {
         Integer id = 1;
         String username = "usuario123";
         String password = "senhaSegura";
-        String role = "USER";
+        Role role = Role.USER;
 
         // Act
         user.setId(id);

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TaxTypeController {
 
     @GetMapping
     @Operation(summary = "Listar todos os tipos de impostos")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<TaxTypeResponseDTO>> getAllTaxTypes() {
         List<TaxTypeResponseDTO> taxTypes = taxTypeService.getAllTaxTypes();
         return ResponseEntity.ok(taxTypes);
@@ -32,6 +34,7 @@ public class TaxTypeController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obter detalhes de um tipo de imposto pelo ID")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<TaxTypeResponseDTO> getTaxTypeById(@PathVariable Integer id) {
         TaxTypeResponseDTO taxType = taxTypeService.getTaxTypeById(id);
         return ResponseEntity.ok(taxType);
@@ -39,6 +42,7 @@ public class TaxTypeController {
 
     @PostMapping
     @Operation(summary = "Cadastrar um novo tipo de imposto")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaxTypeResponseDTO> createTaxType(@RequestBody TaxTypeRequestDTO requestDTO) {
         TaxTypeResponseDTO createdTaxType = taxTypeService.createTaxType(requestDTO);
         return ResponseEntity.status(201).body(createdTaxType);
@@ -46,6 +50,7 @@ public class TaxTypeController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir um tipo de imposto pelo ID")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTaxType(@PathVariable Integer id) {
         taxTypeService.deleteTaxType(id);
         return ResponseEntity.noContent().build();
