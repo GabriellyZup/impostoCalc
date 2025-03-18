@@ -3,6 +3,7 @@ package com.impostoCalc.dtos;
 import com.impostoCalc.model.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Objeto de requisição para registrar ou autenticar um usuário.")
@@ -18,6 +19,7 @@ public class UserRequestDTO {
     @Schema(description = "Senha do usuário.", example = "senhaSegura123", required = true)
     private String password;
 
+    @NotNull(message = "O papel do usuário é obrigatório.")
     @Schema(description = "Papel do usuário no sistema.", example = "ADMIN", required = true)
     private Role role;
 
