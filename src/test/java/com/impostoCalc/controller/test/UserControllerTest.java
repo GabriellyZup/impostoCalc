@@ -1,71 +1,66 @@
 package com.impostoCalc.controller.test;
 
-import com.impostoCalc.controller.UserController;
 import com.impostoCalc.dtos.UserRequestDTO;
 import com.impostoCalc.dtos.UserResponseDTO;
-import com.impostoCalc.service.UserService;
+import com.impostoCalc.model.Role;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import java.util.Map;
 
-class UserControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @InjectMocks
-    private UserController userController;
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class UserControllerTest {
 
-    @Mock
-    private UserService userService;
-
-    public UserControllerTest() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Test
-    void testRegisterUser() {
+    void testRegisterUser_Success() {
         // Arrange
         UserRequestDTO request = new UserRequestDTO();
         request.setUsername("admin");
-        request.setPassword("password");
-
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(1);
-        response.setUsername("admin");
-
-        when(userService.registerUser(request)).thenReturn(response);
+        request.setPassword("senhaSegura");
+        request.setRole(Role.ADMIN);
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.registerUser(request);
+        ResponseEntity<UserResponseDTO> response = restTemplate.postForEntity(
+                "/api/user/register",
+                request,
+                UserResponseDTO.class
+        );
 
         // Assert
-        assertEquals(201, result.getStatusCodeValue());
-        assertEquals(response, result.getBody());
-        verify(userService, times(1)).registerUser(request);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getId());
+        assertEquals("admin", response.getBody().getUsername());
     }
 
     @Test
-    void testLoginUser() {
+    void testLoginUser_Success() {
+        // Registrar usuário primeiro
+        testRegisterUser_Success();
+
         // Arrange
         UserRequestDTO request = new UserRequestDTO();
         request.setUsername("admin");
-        request.setPassword("password");
-
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(1);
-        response.setUsername("admin");
-
-        when(userService.loginUser(request)).thenReturn(response);
+        request.setPassword("senhaSegura");
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.loginUser(request);
+        ResponseEntity<Map> response = restTemplate.postForEntity(
+                "/api/user/login",
+                request,
+                Map.class
+        );
 
         // Assert
-        assertEquals(200, result.getStatusCodeValue());
-        assertEquals(response, result.getBody());
-        verify(userService, times(1)).loginUser(request);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().get("token"));
     }
 }

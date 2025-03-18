@@ -12,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +38,7 @@ class UserDetailsServiceImplTest {
         user.setUsername(username);
         user.setPassword("hashedPassword");
         user.setRole(Role.ADMIN);
-        when(userRepository.findByUsername(username)).thenReturn(user);
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
