@@ -26,7 +26,10 @@ public class UserRequestDTOTest {
         UserRequestDTO dto = new UserRequestDTO();
         dto.setUsername("usuario123");
         dto.setPassword("senhaSegura");
-        dto.setRole(Role.USER); // Use o enum diretamente
+        dto.setRole(Role.valueOf("USER"));
+
+
+        dto.setRole(Role.USER); // Use o enum diretamente develop
         Set<ConstraintViolation<UserRequestDTO>> violations = validator.validate(dto);
         assertEquals(0, violations.size(), "DTO válido não deve ter violações");
     }
