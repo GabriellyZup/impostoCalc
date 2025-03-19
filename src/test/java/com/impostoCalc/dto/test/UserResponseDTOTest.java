@@ -13,10 +13,13 @@ public class UserResponseDTOTest {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(1);
         dto.setUsername("usuario123");
+
         dto.setRole(Role.valueOf("USER"));
+
+        dto.setRole(Role.USER); // Use o enum diretamente develop
 
         assertEquals(1, dto.getId());
         assertEquals("usuario123", dto.getUsername());
-        assertEquals("USER", dto.getRole());
+        assertEquals(Role.USER, dto.getRole()); // Compare com o enum
     }
 }

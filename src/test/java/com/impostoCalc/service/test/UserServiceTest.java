@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -64,7 +66,7 @@ class UserServiceTest {
         requestDTO.setPassword("senhaSegura");
         requestDTO.setRole(Role.USER);
 
-        when(userRepository.findByUsername("usuario123")).thenReturn(new User());
+        when(userRepository.findByUsername("usuario123")).thenReturn(Optional.of(new User()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.registerUser(requestDTO);
@@ -101,7 +103,7 @@ class UserServiceTest {
         user.setPassword("hashedPassword");
         user.setRole(Role.USER);
 
-        when(userRepository.findByUsername("usuario123")).thenReturn(user);
+        when(userRepository.findByUsername("usuario123")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senhaSegura", "hashedPassword")).thenReturn(true);
 
         UserResponseDTO responseDTO = userService.loginUser(requestDTO);
@@ -123,7 +125,7 @@ class UserServiceTest {
         user.setPassword("hashedPassword");
         user.setRole(Role.USER);
 
-        when(userRepository.findByUsername("usuario123")).thenReturn(user);
+        when(userRepository.findByUsername("usuario123")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senhaIncorreta", "hashedPassword")).thenReturn(false);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {

@@ -28,6 +28,8 @@ public class UserRequestDTOTest {
         dto.setPassword("senhaSegura");
         dto.setRole(Role.valueOf("USER"));
 
+
+        dto.setRole(Role.USER); // Use o enum diretamente develop
         Set<ConstraintViolation<UserRequestDTO>> violations = validator.validate(dto);
         assertEquals(0, violations.size(), "DTO válido não deve ter violações");
     }
@@ -38,7 +40,6 @@ public class UserRequestDTOTest {
         dto.setUsername(null); // Campo obrigatório
         dto.setPassword(null); // Campo obrigatório
         dto.setRole(null); // Campo obrigatório
-
         Set<ConstraintViolation<UserRequestDTO>> violations = validator.validate(dto);
         assertEquals(3, violations.size(), "DTO inválido deve ter 3 violações");
     }

@@ -4,17 +4,15 @@ import com.impostoCalc.model.User;
 import com.impostoCalc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserRepositoryTest {
-
-//    @InjectMocks
-//    private UserRepository userRepository;
 
     @Mock
     private UserRepository mockUserRepository;
@@ -31,14 +29,14 @@ class UserRepositoryTest {
         User user = new User();
         user.setUsername(username);
 
-        when(mockUserRepository.findByUsername(username)).thenReturn(user);
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
-        User result = mockUserRepository.findByUsername(username);
+        Optional<User> result = mockUserRepository.findByUsername(username);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(username, result.getUsername());
+        assertTrue(result.isPresent());
+        assertEquals(username, result.get().getUsername());
         verify(mockUserRepository, times(1)).findByUsername(username);
     }
 
@@ -47,14 +45,13 @@ class UserRepositoryTest {
         // Arrange
         String username = "admin";
 
-        when(mockUserRepository.findByUsername(username)).thenReturn(null);
+        when(mockUserRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // Act
-        User result = mockUserRepository.findByUsername(username);
+        Optional<User> result = mockUserRepository.findByUsername(username);
 
         // Assert
-        assertNull(result);
+        assertFalse(result.isPresent());
         verify(mockUserRepository, times(1)).findByUsername(username);
     }
 }
-
