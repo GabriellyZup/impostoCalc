@@ -1,6 +1,7 @@
 package com.impostoCalc.dto.test;
 
 import com.impostoCalc.dtos.UserRequestDTO;
+import com.impostoCalc.model.Role;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -25,7 +26,7 @@ public class UserRequestDTOTest {
         UserRequestDTO dto = new UserRequestDTO();
         dto.setUsername("usuario123");
         dto.setPassword("senhaSegura");
-        dto.setRole("USER");
+        dto.setRole(Role.valueOf("USER"));
 
         Set<ConstraintViolation<UserRequestDTO>> violations = validator.validate(dto);
         assertEquals(0, violations.size(), "DTO válido não deve ter violações");
