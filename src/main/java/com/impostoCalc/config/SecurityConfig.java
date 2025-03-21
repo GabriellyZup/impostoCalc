@@ -18,26 +18,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    SecurityFilter securityFilter;
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable())
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth -> auth
-//                        // Endpoints públicos
-//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/user/register", "/api/user/login").permitAll()
-//                        // Endpoints protegidos
-//                        .requestMatchers(HttpMethod.GET, "/api/tipos", "/api/tipos/**").hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/api/tipos").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/tipos/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/api/calculo").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
-//                )
-//                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-//        return http.build();
-//    }
+    @Autowired
+    SecurityFilter securityFilter;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Endpoints públicos
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/user/register", "/api/user/login").permitAll()
+                        // Endpoints protegidos
+                        .requestMatchers(HttpMethod.GET, "/api/tipos", "/api/tipos/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/tipos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tipos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/calculo").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
