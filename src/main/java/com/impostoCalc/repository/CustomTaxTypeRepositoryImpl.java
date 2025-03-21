@@ -13,7 +13,7 @@ import java.util.Optional;
 public class CustomTaxTypeRepositoryImpl implements CustomTaxTypeRepository {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    public EntityManager entityManager;
 
     @Override
     public Optional<TaxType> findByName(String nome) {

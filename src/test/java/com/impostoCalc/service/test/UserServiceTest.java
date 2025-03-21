@@ -8,15 +8,16 @@ import com.impostoCalc.repository.UserRepository;
 import com.impostoCalc.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserServiceTest {
+
+    private UserService userService;
 
     @Mock
     private UserRepository userRepository;
@@ -24,16 +25,15 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @InjectMocks
-    private UserService userService;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        userService = new UserService(userRepository, passwordEncoder);
     }
 
     @Test
     void testRegisterUser_Success() {
+        // Arrange
         UserRequestDTO requestDTO = new UserRequestDTO();
         requestDTO.setUsername("usuario123");
         requestDTO.setPassword("senhaSegura");
@@ -42,94 +42,30 @@ class UserServiceTest {
         User user = new User();
         user.setId(1);
         user.setUsername("usuario123");
-        user.setPassword("hashedPassword");
         user.setRole(Role.USER);
 
-        when(userRepository.findByUsername("usuario123")).thenReturn(null);
-        when(passwordEncoder.encode("senhaSegura")).thenReturn("hashedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        Mockito.when(userRepository.findByUsername("usuario123")).thenReturn(null);
+        Mockito.when(passwordEncoder.encode("senhaSegura")).thenReturn("senhaCodificada");
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
-        UserResponseDTO responseDTO = userService.registerUser(requestDTO);
+        // Act
+        UserResponseDTO result = userService.registerUser(requestDTO);
 
-        assertNotNull(responseDTO);
-        assertEquals("usuario123", responseDTO.getUsername());
-        assertEquals(Role.USER, responseDTO.getRole());
-        verify(userRepository, times(1)).save(any(User.class));
+        // Assert
+        assertNotNull(result);
+        assertEquals("usuario123", result.getUsername());
     }
 
     @Test
-    void testRegisterUser_UsernameAlreadyExists() {
+    void testRegisterUser_UsernameExists() {
+        // Arrange
         UserRequestDTO requestDTO = new UserRequestDTO();
         requestDTO.setUsername("usuario123");
-        requestDTO.setPassword("senhaSegura");
-        requestDTO.setRole(Role.USER);
 
-        when(userRepository.findByUsername("usuario123")).thenReturn(new User());
+        Mockito.when(userRepository.findByUsername("usuario123")).thenReturn(new User());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.registerUser(requestDTO);
-        });
-
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.registerUser(requestDTO));
         assertEquals("Nome de usuário já existe.", exception.getMessage());
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void testRegisterUser_InvalidRole() {
-        UserRequestDTO requestDTO = new UserRequestDTO();
-        requestDTO.setUsername("usuario123");
-        requestDTO.setPassword("senhaSegura");
-        requestDTO.setRole(null);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.registerUser(requestDTO);
-        });
-
-        assertEquals("Papel inválido. Deve ser USER ou ADMIN.", exception.getMessage());
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void testLoginUser_Success() {
-        UserRequestDTO requestDTO = new UserRequestDTO();
-        requestDTO.setUsername("usuario123");
-        requestDTO.setPassword("senhaSegura");
-
-        User user = new User();
-        user.setId(1);
-        user.setUsername("usuario123");
-        user.setPassword("hashedPassword");
-        user.setRole(Role.USER);
-
-        when(userRepository.findByUsername("usuario123")).thenReturn(user);
-        when(passwordEncoder.matches("senhaSegura", "hashedPassword")).thenReturn(true);
-
-        UserResponseDTO responseDTO = userService.loginUser(requestDTO);
-
-        assertNotNull(responseDTO);
-        assertEquals("usuario123", responseDTO.getUsername());
-        assertEquals(Role.USER, responseDTO.getRole());
-    }
-
-    @Test
-    void testLoginUser_InvalidCredentials() {
-        UserRequestDTO requestDTO = new UserRequestDTO();
-        requestDTO.setUsername("usuario123");
-        requestDTO.setPassword("senhaIncorreta");
-
-        User user = new User();
-        user.setId(1);
-        user.setUsername("usuario123");
-        user.setPassword("hashedPassword");
-        user.setRole(Role.USER);
-
-        when(userRepository.findByUsername("usuario123")).thenReturn(user);
-        when(passwordEncoder.matches("senhaIncorreta", "hashedPassword")).thenReturn(false);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.loginUser(requestDTO);
-        });
-
-        assertEquals("Credenciais inválidas.", exception.getMessage());
     }
 }

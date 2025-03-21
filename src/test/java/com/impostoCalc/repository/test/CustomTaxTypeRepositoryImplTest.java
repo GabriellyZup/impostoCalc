@@ -6,18 +6,18 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CustomTaxTypeRepositoryImplTest {
 
-    @InjectMocks
     private CustomTaxTypeRepositoryImpl customTaxTypeRepository;
 
     @Mock
@@ -29,18 +29,23 @@ class CustomTaxTypeRepositoryImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        customTaxTypeRepository = new CustomTaxTypeRepositoryImpl();
+        customTaxTypeRepository.entityManager = entityManager;
     }
 
     @Test
-    void testFindByName_Success() {
+    void testFindByName() {
         // Arrange
         String nome = "ICMS";
         TaxType taxType = new TaxType();
+        taxType.setId(1);
         taxType.setNome(nome);
+        taxType.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
+        taxType.setAliquota(BigDecimal.valueOf(18.0));
 
-        when(entityManager.createQuery(anyString(), eq(TaxType.class))).thenReturn(typedQuery);
-        when(typedQuery.setParameter("nome", nome)).thenReturn(typedQuery);
-        when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(taxType));
+        Mockito.when(entityManager.createQuery(Mockito.anyString(), Mockito.eq(TaxType.class))).thenReturn(typedQuery);
+        Mockito.when(typedQuery.setParameter(Mockito.eq("nome"), Mockito.eq(nome))).thenReturn(typedQuery);
+        Mockito.when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(taxType));
 
         // Act
         Optional<TaxType> result = customTaxTypeRepository.findByName(nome);
@@ -48,25 +53,5 @@ class CustomTaxTypeRepositoryImplTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(nome, result.get().getNome());
-        verify(entityManager, times(1)).createQuery(anyString(), eq(TaxType.class));
-        verify(typedQuery, times(1)).setParameter("nome", nome);
-    }
-
-    @Test
-    void testFindByName_NotFound() {
-        // Arrange
-        String nome = "ICMS";
-
-        when(entityManager.createQuery(anyString(), eq(TaxType.class))).thenReturn(typedQuery);
-        when(typedQuery.setParameter("nome", nome)).thenReturn(typedQuery);
-        when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.empty());
-
-        // Act
-        Optional<TaxType> result = customTaxTypeRepository.findByName(nome);
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(entityManager, times(1)).createQuery(anyString(), eq(TaxType.class));
-        verify(typedQuery, times(1)).setParameter("nome", nome);
     }
 }

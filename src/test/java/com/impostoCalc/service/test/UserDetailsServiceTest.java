@@ -3,7 +3,7 @@ package com.impostoCalc.service.test;
 import com.impostoCalc.model.Role;
 import com.impostoCalc.model.User;
 import com.impostoCalc.repository.UserRepository;
-import com.impostoCalc.service.UserDetailsServiceImpl;
+import com.impostoCalc.service.UserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,13 +15,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserDetailsServiceImplTest {
+class UserDetailsServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserDetailsServiceImpl userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @BeforeEach
     void setUp() {

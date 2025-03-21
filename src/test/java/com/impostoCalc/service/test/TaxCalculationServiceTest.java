@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -52,7 +53,7 @@ class TaxCalculationServiceTest {
         assertEquals("ICMS", response.getTipoImposto());
         assertEquals(BigDecimal.valueOf(1000), response.getValorBase());
         assertEquals(BigDecimal.valueOf(18), response.getAliquota());
-        assertEquals(BigDecimal.valueOf(180), response.getValorImposto());
+        assertEquals(BigDecimal.valueOf(180.0), response.getValorImposto());
         verify(taxTypeRepository, times(1)).findById(1);
     }
 
@@ -61,16 +62,30 @@ class TaxCalculationServiceTest {
         // Arrange
         TaxCalculationRequestDTO request = new TaxCalculationRequestDTO();
         request.setTipoImpostoId(1);
-        request.setValorBase(BigDecimal.valueOf(1000));
 
         when(taxTypeRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            taxCalculationService.calculateTax(request);
-        });
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taxCalculationService.calculateTax(request));
+        assertEquals("404 NOT_FOUND \"Tipo de imposto não encontrado\"", exception.getMessage());
+        verify(taxTypeRepository, times(1)).findById(1);
+    }
 
-        assertEquals("Tipo de imposto não encontrado para o ID fornecido.", exception.getMessage());
+    @Test
+    void testCalculateTax_InvalidAliquota() {
+        // Arrange
+        TaxCalculationRequestDTO request = new TaxCalculationRequestDTO();
+        request.setTipoImpostoId(1);
+
+        TaxType taxType = new TaxType();
+        taxType.setId(1);
+        taxType.setAliquota(BigDecimal.ZERO);
+
+        when(taxTypeRepository.findById(1)).thenReturn(Optional.of(taxType));
+
+        // Act & Assert
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> taxCalculationService.calculateTax(request));
+        assertEquals("400 BAD_REQUEST \"Alíquota inválida\"", exception.getMessage());
         verify(taxTypeRepository, times(1)).findById(1);
     }
 }

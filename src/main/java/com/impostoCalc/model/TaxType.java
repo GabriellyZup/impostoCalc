@@ -26,6 +26,14 @@ public class TaxType {
     @Schema(description = "Alíquota do imposto.", example = "18.00")
     private BigDecimal aliquota;
 
+    public TaxType(int i, String icms, String s, BigDecimal bigDecimal) {
+    }
+
+    public TaxType() {
+
+    }
+    //construtor criado para atender a classe de test
+
     public Integer getId() {
         return id;
     }

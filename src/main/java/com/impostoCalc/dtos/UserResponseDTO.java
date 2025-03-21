@@ -15,6 +15,9 @@ public class UserResponseDTO {
     @Schema(description = "Papel do usuário no sistema.", example = "USER")
     private Role role;
 
+    @Schema(description = "Token JWT para autenticação.", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    private String token;
+
     public Integer getId() {
         return id;
     }
@@ -37,5 +40,13 @@ public class UserResponseDTO {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

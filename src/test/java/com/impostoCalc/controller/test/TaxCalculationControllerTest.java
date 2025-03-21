@@ -4,10 +4,12 @@ import com.impostoCalc.controller.TaxCalculationController;
 import com.impostoCalc.dtos.TaxCalculationRequestDTO;
 import com.impostoCalc.dtos.TaxCalculationResponseDTO;
 import com.impostoCalc.service.TaxCalculationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
@@ -23,7 +25,8 @@ class TaxCalculationControllerTest {
     @Mock
     private TaxCalculationService taxCalculationService;
 
-    public TaxCalculationControllerTest() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -46,7 +49,7 @@ class TaxCalculationControllerTest {
         ResponseEntity<TaxCalculationResponseDTO> result = taxCalculationController.calculateTax(request);
 
         // Assert
-        assertEquals(200, result.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(response, result.getBody());
         verify(taxCalculationService, times(1)).calculateTax(request);
     }

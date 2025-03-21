@@ -4,41 +4,37 @@ import com.impostoCalc.model.Role;
 import com.impostoCalc.model.User;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserTest {
 
     @Test
-    void testUserGettersAndSetters() {
+    void testUserModel() {
         // Arrange
         User user = new User();
-        Integer id = 1;
-        String username = "usuario123";
-        String password = "senhaSegura";
-        Role role = Role.USER;
-
-        // Act
-        user.setId(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setRole(role);
+        user.setId(1);
+        user.setUsername("admin");
+        user.setPassword("password");
+        user.setRole(Role.ADMIN);
 
         // Assert
-        assertEquals(id, user.getId());
-        assertEquals(username, user.getUsername());
-        assertEquals(password, user.getPassword());
-        assertEquals(role, user.getRole());
+        assertEquals(1, user.getId());
+        assertEquals("admin", user.getUsername());
+        assertEquals("password", user.getPassword());
+        assertEquals(Role.ADMIN, user.getRole());
     }
 
     @Test
-    void testUserDefaultValues() {
+    void testUserConstructor() {
         // Arrange
-        User user = new User();
+        User user = new User(1, "admin", "password", Role.ADMIN);
 
         // Assert
-        assertNull(user.getId());
-        assertNull(user.getUsername());
-        assertNull(user.getPassword());
-        assertNull(user.getRole());
+        assertNotNull(user);
+        assertEquals(1, user.getId());
+        assertEquals("admin", user.getUsername());
+        assertEquals("password", user.getPassword());
+        assertEquals(Role.ADMIN, user.getRole());
     }
 }

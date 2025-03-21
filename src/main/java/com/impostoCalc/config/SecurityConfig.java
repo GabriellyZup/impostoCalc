@@ -1,37 +1,43 @@
 package com.impostoCalc.config;
 
-import com.impostoCalc.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
-
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Desabilita CSRF
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/user/register", "/api/user/login").permitAll() // Endpoints públicos
-                        .requestMatchers("/api/tipos").hasAnyRole("USER", "ADMIN") // USER e ADMIN podem consultar tipos de impostos
-                        .requestMatchers("/api/tipos/**").hasRole("ADMIN") // Apenas ADMIN pode criar e excluir tipos de impostos
-                        .requestMatchers("/calculo").hasAnyRole("USER", "ADMIN") // USER e ADMIN podem calcular impostos
-                        .anyRequest().authenticated() // Todos os outros endpoints exigem autenticação
-                )
-                .httpBasic(httpBasic -> httpBasic.disable()); // Substituímos o método obsoleto
-        return http.build();
-    }
+//    @Autowired
+//    SecurityFilter securityFilter;
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(csrf -> csrf.disable())
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        // Endpoints públicos
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/user/register", "/api/user/login").permitAll()
+//                        // Endpoints protegidos
+//                        .requestMatchers(HttpMethod.GET, "/api/tipos", "/api/tipos/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/tipos").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/tipos/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/calculo").hasRole("ADMIN")
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+//        return http.build();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -11,7 +11,7 @@ import java.util.List;
 public class TaxTypeRepositoryImpl {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    public EntityManager entityManager;
 
     public List<TaxType> findByCustomQuery(String query) {
         return entityManager.createQuery(query, TaxType.class).getResultList();

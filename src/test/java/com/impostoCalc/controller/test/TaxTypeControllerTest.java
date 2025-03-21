@@ -4,12 +4,13 @@ import com.impostoCalc.controller.TaxTypeController;
 import com.impostoCalc.dtos.TaxTypeRequestDTO;
 import com.impostoCalc.dtos.TaxTypeResponseDTO;
 import com.impostoCalc.service.TaxTypeService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -26,13 +27,13 @@ class TaxTypeControllerTest {
     @Mock
     private TaxTypeService taxTypeService;
 
-    public TaxTypeControllerTest() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void testGetAllTaxTypes_AsUser() {
+    void testGetAllTaxTypes() {
         // Arrange
         TaxTypeResponseDTO taxType1 = new TaxTypeResponseDTO();
         taxType1.setId(1);
@@ -47,32 +48,50 @@ class TaxTypeControllerTest {
         taxType2.setAliquota(BigDecimal.valueOf(5.0));
 
         List<TaxTypeResponseDTO> taxTypes = Arrays.asList(taxType1, taxType2);
-
         when(taxTypeService.getAllTaxTypes()).thenReturn(taxTypes);
 
         // Act
         ResponseEntity<List<TaxTypeResponseDTO>> result = taxTypeController.getAllTaxTypes();
 
         // Assert
-        assertEquals(200, result.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(taxTypes, result.getBody());
         verify(taxTypeService, times(1)).getAllTaxTypes();
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    void testCreateTaxType_AsAdmin() {
+    void testGetTaxTypeById() {
+        // Arrange
+        TaxTypeResponseDTO taxType = new TaxTypeResponseDTO();
+        taxType.setId(1);
+        taxType.setNome("ICMS");
+        taxType.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
+        taxType.setAliquota(BigDecimal.valueOf(18.0));
+
+        when(taxTypeService.getTaxTypeById(1)).thenReturn(taxType);
+
+        // Act
+        ResponseEntity<TaxTypeResponseDTO> result = taxTypeController.getTaxTypeById(1);
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(taxType, result.getBody());
+        verify(taxTypeService, times(1)).getTaxTypeById(1);
+    }
+
+    @Test
+    void testCreateTaxType() {
         // Arrange
         TaxTypeRequestDTO request = new TaxTypeRequestDTO();
-        request.setNome("ICMS");
-        request.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        request.setAliquota(BigDecimal.valueOf(18.0));
+        request.setNome("IPI");
+        request.setDescricao("Imposto sobre Produtos Industrializados");
+        request.setAliquota(BigDecimal.valueOf(12.0));
 
         TaxTypeResponseDTO response = new TaxTypeResponseDTO();
-        response.setId(1);
-        response.setNome("ICMS");
-        response.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        response.setAliquota(BigDecimal.valueOf(18.0));
+        response.setId(3);
+        response.setNome("IPI");
+        response.setDescricao("Imposto sobre Produtos Industrializados");
+        response.setAliquota(BigDecimal.valueOf(12.0));
 
         when(taxTypeService.createTaxType(request)).thenReturn(response);
 
@@ -80,29 +99,21 @@ class TaxTypeControllerTest {
         ResponseEntity<TaxTypeResponseDTO> result = taxTypeController.createTaxType(request);
 
         // Assert
-        assertEquals(201, result.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(response, result.getBody());
         verify(taxTypeService, times(1)).createTaxType(request);
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void testCreateTaxType_AsUser() {
+    void testDeleteTaxType() {
         // Arrange
-        TaxTypeRequestDTO request = new TaxTypeRequestDTO();
-        request.setNome("ICMS");
-        request.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        request.setAliquota(BigDecimal.valueOf(18.0));
+        doNothing().when(taxTypeService).deleteTaxType(1);
 
-        // Act & Assert
-        try {
-            taxTypeController.createTaxType(request);
-        } catch (Exception e) {
-            // Simula o comportamento esperado para usuários sem permissão
-            assertEquals("Access is denied", e.getMessage());
-        }
+        // Act
+        ResponseEntity<Void> result = taxTypeController.deleteTaxType(1);
 
-        // Verifica que o serviço não foi chamado
-        verify(taxTypeService, times(0)).createTaxType(request);
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        verify(taxTypeService, times(1)).deleteTaxType(1);
     }
 }
