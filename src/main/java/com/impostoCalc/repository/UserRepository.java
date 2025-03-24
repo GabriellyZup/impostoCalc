@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> { // Alterado o tipo do ID para Long
+public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUsername(String username);
 
-
-    //userRepository.findByUsername("admin")).thenReturn(new org.springframework.security.core.userdetails.User("admin", "password",Collections.singletonList(new SimpleGrantedAuthority(UserRole.ADMIN.Username()))));
 }
