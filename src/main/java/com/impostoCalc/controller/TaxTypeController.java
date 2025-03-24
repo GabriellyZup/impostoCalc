@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,29 +27,29 @@ public class TaxTypeController {
 
     @GetMapping
     @Operation(summary = "Listar todos os tipos de impostos")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // Permite acesso para USER e ADMIN
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<TaxTypeResponseDTO>> getAllTaxTypes() {
         return ResponseEntity.ok(taxTypeService.getAllTaxTypes());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obter detalhes de um tipo de imposto pelo ID")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // Permite acesso para USER e ADMIN
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<TaxTypeResponseDTO> getTaxTypeById(@PathVariable Integer id) {
         return ResponseEntity.ok(taxTypeService.getTaxTypeById(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')") // Apenas ADMIN pode cadastrar
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cadastrar novo tipo de imposto (ADMIN)")
     public ResponseEntity<TaxTypeResponseDTO> createTaxType(@RequestBody @Valid TaxTypeRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taxTypeService.createTaxType(requestDTO));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')") // Apenas ADMIN pode excluir
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Excluir tipo de imposto pelo ID (ADMIN)")
-    public ResponseEntity<Void> deleteTaxType(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteTaxType(@PathVariable @Positive Integer id) {
         taxTypeService.deleteTaxType(id);
         return ResponseEntity.noContent().build();
     }
