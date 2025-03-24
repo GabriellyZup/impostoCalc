@@ -1,28 +1,30 @@
 package com.impostoCalc.controller;
 
-import com.impostoCalc.dtos.TaxCalculationRequestDTO;
-import com.impostoCalc.dtos.TaxCalculationResponseDTO;
+import com.impostoCalc.dtos.request.TaxCalculationRequestDTO;
+import com.impostoCalc.dtos.response.TaxCalculationResponseDTO;
 import com.impostoCalc.service.TaxCalculationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/calculo")
-@Tag(name = "Cálculo de Impostos", description = "Endpoints para cálculo de impostos")
+@Tag(name = "Cálculo de Impostos", description = "Operações de cálculo de impostos")
+@SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class TaxCalculationController {
 
-    @Autowired
-    private TaxCalculationService taxCalculationService;
+    private final TaxCalculationService taxCalculationService;
 
     @PostMapping
-    @Operation(summary = "Calcular imposto", description = "Calcula o valor do imposto com base no tipo de imposto e no valor base fornecido.")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<TaxCalculationResponseDTO> calculateTax(@RequestBody TaxCalculationRequestDTO request) {
-        TaxCalculationResponseDTO response = taxCalculationService.calculateTax(request);
-        return ResponseEntity.ok(response);
+    @Operation(summary = "Calcular imposto")
+    public ResponseEntity<TaxCalculationResponseDTO> calculateTax(@RequestBody @Valid TaxCalculationRequestDTO request) {
+        return ResponseEntity.ok(taxCalculationService.calculateTax(request));
     }
 }

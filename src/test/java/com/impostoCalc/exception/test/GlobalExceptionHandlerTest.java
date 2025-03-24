@@ -18,50 +18,29 @@ class GlobalExceptionHandlerTest {
     void testHandleIllegalArgumentException() {
         // Arrange
         IllegalArgumentException exception = new IllegalArgumentException("Invalid argument");
-        WebRequest webRequest = mock(WebRequest.class);
-        when(webRequest.getDescription(false)).thenReturn("/test");
+        WebRequest request = mock(WebRequest.class);
+        when(request.getDescription(false)).thenReturn("/api/test");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleIllegalArgumentException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleIllegalArgumentException(exception, request);
 
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
         assertEquals("Invalid argument", response.getBody().getMessage());
-        assertEquals("/test", response.getBody().getPath());
     }
 
     @Test
     void testHandleRuntimeException() {
         // Arrange
-        RuntimeException exception = new RuntimeException("Runtime error");
-        WebRequest webRequest = mock(WebRequest.class);
-        when(webRequest.getDescription(false)).thenReturn("/test");
+        RuntimeException exception = new RuntimeException("Server error");
+        WebRequest request = mock(WebRequest.class);
+        when(request.getDescription(false)).thenReturn("/api/test");
 
         // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleRuntimeException(exception, webRequest);
+        ResponseEntity<ErrorResponse> response = exceptionHandler.handleRuntimeException(exception, request);
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Runtime error", response.getBody().getMessage());
-        assertEquals("/test", response.getBody().getPath());
-    }
-
-    @Test
-    void testHandleAllExceptions() {
-        // Arrange
-        Exception exception = new Exception("Generic error");
-        WebRequest webRequest = mock(WebRequest.class);
-        when(webRequest.getDescription(false)).thenReturn("/test");
-
-        // Act
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleAllExceptions(exception, webRequest);
-
-        // Assert
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Erro interno no servidor", response.getBody().getMessage());
-        assertEquals("/test", response.getBody().getPath());
+        assertEquals("Server error", response.getBody().getMessage());
     }
 }

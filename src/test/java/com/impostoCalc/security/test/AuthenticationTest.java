@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +21,13 @@ class AuthenticationTest {
     @Test
     void testAccessPublicEndpoint() {
         String url = "http://localhost:" + port + "/api/user/login";
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Simula uma requisição POST com um corpo vazio (ou adicione um corpo válido, se necessário)
+        HttpEntity<String> entity = new HttpEntity<>("{}", headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -42,7 +46,8 @@ class AuthenticationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("usuario123", "senhaSegura"); // Substitua pelos dados reais
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
