@@ -1,11 +1,11 @@
 package com.impostoCalc.dtos.test;
 
-import com.impostoCalc.dtos.TaxTypeRequestDTO;
+import com.impostoCalc.dtos.request.TaxTypeRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TaxTypeRequestDTOTest {
 
@@ -13,13 +13,18 @@ class TaxTypeRequestDTOTest {
     void testTaxTypeRequestDTO() {
         // Arrange
         TaxTypeRequestDTO requestDTO = new TaxTypeRequestDTO();
-        requestDTO.setNome("ICMS");
-        requestDTO.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        requestDTO.setAliquota(BigDecimal.valueOf(18.0));
+        String nome = "ICMS";
+        String descricao = "Imposto sobre Circulação de Mercadorias e Serviços";
+        BigDecimal aliquota = BigDecimal.valueOf(18.00);
+
+        // Act
+        requestDTO.setNome(nome);
+        requestDTO.setDescricao(descricao);
+        requestDTO.setAliquota(aliquota);
 
         // Assert
-        assertEquals("ICMS", requestDTO.getNome());
-        assertEquals("Imposto sobre Circulação de Mercadorias e Serviços", requestDTO.getDescricao());
-        assertEquals(BigDecimal.valueOf(18.0), requestDTO.getAliquota());
+        assertEquals(nome, requestDTO.getNome());
+        assertEquals(descricao, requestDTO.getDescricao());
+        assertEquals(aliquota, requestDTO.getAliquota());
     }
 }
