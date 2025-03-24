@@ -5,37 +5,25 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TaxTypeTest {
 
     @Test
-    void testTaxTypeModel() {
+    void testTaxType() {
         // Arrange
-        TaxType taxType = new TaxType();
-        taxType.setId(1);
-        taxType.setNome("ICMS");
-        taxType.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        taxType.setAliquota(BigDecimal.valueOf(18.0));
+        Integer id = 1;
+        String nome = "ICMS";
+        String descricao = "Imposto sobre Circulação de Mercadorias e Serviços";
+        BigDecimal aliquota = BigDecimal.valueOf(18.00);
+
+        // Act
+        TaxType taxType = new TaxType(id, nome, descricao, aliquota);
 
         // Assert
-        assertEquals(1, taxType.getId());
-        assertEquals("ICMS", taxType.getNome());
-        assertEquals("Imposto sobre Circulação de Mercadorias e Serviços", taxType.getDescricao());
-        assertEquals(BigDecimal.valueOf(18.0), taxType.getAliquota());
-    }
-
-    @Test
-    void testTaxTypeConstructor() {
-        // Arrange
-        TaxType taxType = new TaxType(1, "ICMS", "Imposto sobre Circulação de Mercadorias e Serviços", BigDecimal.valueOf(18.0));
-
-        // Assert
-        assertNotNull(taxType);
-        assertEquals(1, taxType.getId());
-        assertEquals("ICMS", taxType.getNome());
-        assertEquals("Imposto sobre Circulação de Mercadorias e Serviços", taxType.getDescricao());
-        assertEquals(BigDecimal.valueOf(18.0), taxType.getAliquota());
+        assertEquals(id, taxType.getId());
+        assertEquals(nome, taxType.getNome());
+        assertEquals(descricao, taxType.getDescricao());
+        assertEquals(aliquota, taxType.getAliquota());
     }
 }

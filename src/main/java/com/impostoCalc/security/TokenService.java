@@ -1,9 +1,4 @@
-package com.impostoCalc.config;
-
-//import com.impostoCalc.jwt.JWT;
-//import com.impostoCalc.jwt.algorithms.Algorithm;
-//import com.impostoCalc.jwt.exceptions.JWTCreationException;
-//import com.impostoCalc.jwt.exceptions.JWTVerificationException;
+package com.impostoCalc.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -12,13 +7,14 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.impostoCalc.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-//import static org.springframework.security.config.Elements.JWT;
-
+@Getter
 @Service
 public class TokenService {
 
@@ -29,12 +25,13 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("taxcalc-api")
+                    .withIssuer("impostocalc")
                     .withSubject(user.getUsername())
+                    .withClaim("role", user.getRole().name()) // Adiciona a role como claim
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Error while generating token", exception);
+            throw new RuntimeException("Erro ao gerar token", exception);
         }
     }
 
@@ -42,7 +39,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("taxcalc-api")
+                    .withIssuer("impostocalc")
                     .build()
                     .verify(token)
                     .getSubject();

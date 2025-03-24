@@ -1,52 +1,55 @@
 package com.impostoCalc.controller;
 
-import com.impostoCalc.config.TokenService;
-import com.impostoCalc.dtos.UserRequestDTO;
-import com.impostoCalc.dtos.UserResponseDTO;
-import com.impostoCalc.model.User;
-import com.impostoCalc.service.UserService;
+import com.impostoCalc.dtos.request.UserLoginRequestDTO;
+import com.impostoCalc.dtos.response.UserLoginResponseDTO;
+import com.impostoCalc.dtos.response.UserRegisterResponseDTO;
+import com.impostoCalc.dtos.request.UserRegisterRequestDTO;
+
+import com.impostoCalc.security.TokenService;
+import com.impostoCalc.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
 @Tag(name = "User", description = "Gerenciamento de Usuários")
+@RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final AuthenticationManager authenticationManager;
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    public UserController(UserService userService, AuthenticationManager authenticationManager, TokenService tokenService) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
-    }
+    private final TokenService tokenService;
 
     @PostMapping("/register")
     @Operation(summary = "Registrar um novo usuário")
-    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO requestDTO) {
-        UserResponseDTO user = userService.registerUser(requestDTO);
-        return ResponseEntity.status(201).body(user);
+    public ResponseEntity<UserRegisterResponseDTO> registerUser(@RequestBody @Valid UserRegisterRequestDTO requestDTO) {
+        UserRegisterResponseDTO userRegisterResponseDTO = userServiceImpl.registerUser(requestDTO);
+
+        if (userRegisterResponseDTO != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userRegisterResponseDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PostMapping("/login")
     @Operation(summary = "Autenticar um usuário")
-    public ResponseEntity<?> loginUser(@RequestBody UserRequestDTO requestDTO) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(requestDTO.getUsername(), requestDTO.getPassword());
-        var auth = authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody @Valid UserLoginRequestDTO userLoginRequestDTO){
+        UserLoginResponseDTO userLoginResponseDTO = userServiceImpl.authenticateUser(userLoginRequestDTO);
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-        UserResponseDTO userResponse = userService.loginUser(requestDTO);
-        userResponse.setToken(token); // Adiciona o token ao DTO de resposta
-
-        return ResponseEntity.ok("ok");
+        if (userLoginResponseDTO != null){
+            return ResponseEntity.ok(userLoginResponseDTO);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
