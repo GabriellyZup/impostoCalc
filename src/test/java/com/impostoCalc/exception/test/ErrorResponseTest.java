@@ -4,6 +4,7 @@ import com.impostoCalc.exception.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,36 +12,33 @@ import static org.junit.jupiter.api.Assertions.*;
 class ErrorResponseTest {
 
     @Test
-    void testErrorResponseFields() {
+    void testErrorResponse() {
         // Arrange
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String message = "Validation error";
-        String path = "/test";
+        String message = "Invalid request";
+        String path = "/api/test";
 
         // Act
         ErrorResponse errorResponse = new ErrorResponse(status, message, path);
 
         // Assert
-        assertNotNull(errorResponse.getTimestamp());
         assertEquals(status.value(), errorResponse.getStatus());
         assertEquals(status.getReasonPhrase(), errorResponse.getError());
         assertEquals(message, errorResponse.getMessage());
         assertEquals(path, errorResponse.getPath());
+        assertNotNull(errorResponse.getTimestamp());
     }
 
     @Test
-    void testValidationErrors() {
+    void testSetValidationErrors() {
         // Arrange
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, "Validation error", "/test");
-        Map<String, String> validationErrors = Map.of("field1", "must not be null", "field2", "must be a valid email");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, "Validation error", "/api/test");
+        Map<String, String> validationErrors = Map.of("field1", "must not be null");
 
         // Act
         errorResponse.setValidationErrors(validationErrors);
 
         // Assert
-        assertNotNull(errorResponse.getValidationErrors());
-        assertEquals(2, errorResponse.getValidationErrors().size());
-        assertEquals("must not be null", errorResponse.getValidationErrors().get("field1"));
-        assertEquals("must be a valid email", errorResponse.getValidationErrors().get("field2"));
+        assertEquals(validationErrors, errorResponse.getValidationErrors());
     }
 }

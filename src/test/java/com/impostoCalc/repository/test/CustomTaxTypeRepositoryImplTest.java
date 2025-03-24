@@ -6,19 +6,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CustomTaxTypeRepositoryImplTest {
-
-    @InjectMocks
-    private CustomTaxTypeRepositoryImpl customTaxTypeRepository;
 
     @Mock
     private EntityManager entityManager;
@@ -26,47 +22,31 @@ class CustomTaxTypeRepositoryImplTest {
     @Mock
     private TypedQuery<TaxType> typedQuery;
 
+    private CustomTaxTypeRepositoryImpl taxTypeRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        taxTypeRepository = new CustomTaxTypeRepositoryImpl();
+        taxTypeRepository.setEntityManager(entityManager);
     }
 
     @Test
-    void testFindByName_Success() {
+    void testFindByCustomQuery() {
         // Arrange
-        String nome = "ICMS";
-        TaxType taxType = new TaxType();
-        taxType.setNome(nome);
-
-        when(entityManager.createQuery(anyString(), eq(TaxType.class))).thenReturn(typedQuery);
-        when(typedQuery.setParameter("nome", nome)).thenReturn(typedQuery);
-        when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(taxType));
+        String query = "SELECT t FROM TaxType t";
+        TaxType taxType = new TaxType(1, "ICMS", "Descrição", null);
+        when(entityManager.createQuery(query, TaxType.class)).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(List.of(taxType));
 
         // Act
-        Optional<TaxType> result = customTaxTypeRepository.findByName(nome);
+        List<TaxType> result = taxTypeRepository.findByCustomQuery(query);
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(nome, result.get().getNome());
-        verify(entityManager, times(1)).createQuery(anyString(), eq(TaxType.class));
-        verify(typedQuery, times(1)).setParameter("nome", nome);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("ICMS", result.get(0).getNome());
+        verify(entityManager).createQuery(query, TaxType.class); // Ver se o método foi chamado
     }
 
-    @Test
-    void testFindByName_NotFound() {
-        // Arrange
-        String nome = "ICMS";
-
-        when(entityManager.createQuery(anyString(), eq(TaxType.class))).thenReturn(typedQuery);
-        when(typedQuery.setParameter("nome", nome)).thenReturn(typedQuery);
-        when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.empty());
-
-        // Act
-        Optional<TaxType> result = customTaxTypeRepository.findByName(nome);
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(entityManager, times(1)).createQuery(anyString(), eq(TaxType.class));
-        verify(typedQuery, times(1)).setParameter("nome", nome);
-    }
 }
