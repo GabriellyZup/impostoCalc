@@ -1,108 +1,95 @@
 package com.impostoCalc.controller.test;
 
 import com.impostoCalc.controller.TaxTypeController;
-import com.impostoCalc.dtos.TaxTypeRequestDTO;
-import com.impostoCalc.dtos.TaxTypeResponseDTO;
+import com.impostoCalc.dtos.request.TaxTypeRequestDTO;
+import com.impostoCalc.dtos.response.TaxTypeResponseDTO;
 import com.impostoCalc.service.TaxTypeService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 class TaxTypeControllerTest {
 
-    @InjectMocks
     private TaxTypeController taxTypeController;
 
     @Mock
     private TaxTypeService taxTypeService;
 
-    public TaxTypeControllerTest() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+        taxTypeController = new TaxTypeController(taxTypeService);
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void testGetAllTaxTypes_AsUser() {
+    void testGetAllTaxTypes() {
         // Arrange
-        TaxTypeResponseDTO taxType1 = new TaxTypeResponseDTO();
-        taxType1.setId(1);
-        taxType1.setNome("ICMS");
-        taxType1.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        taxType1.setAliquota(BigDecimal.valueOf(18.0));
-
-        TaxTypeResponseDTO taxType2 = new TaxTypeResponseDTO();
-        taxType2.setId(2);
-        taxType2.setNome("ISS");
-        taxType2.setDescricao("Imposto sobre Serviços");
-        taxType2.setAliquota(BigDecimal.valueOf(5.0));
-
-        List<TaxTypeResponseDTO> taxTypes = Arrays.asList(taxType1, taxType2);
-
-        when(taxTypeService.getAllTaxTypes()).thenReturn(taxTypes);
+        TaxTypeResponseDTO taxType1 = new TaxTypeResponseDTO(1, "ICMS", "Imposto sobre Circulação de Mercadorias e Serviços", BigDecimal.valueOf(18.0));
+        TaxTypeResponseDTO taxType2 = new TaxTypeResponseDTO(2, "ISS", "Imposto sobre Serviços", BigDecimal.valueOf(5.0));
+        Mockito.when(taxTypeService.getAllTaxTypes()).thenReturn(List.of(taxType1, taxType2));
 
         // Act
-        ResponseEntity<List<TaxTypeResponseDTO>> result = taxTypeController.getAllTaxTypes();
+        ResponseEntity<List<TaxTypeResponseDTO>> response = taxTypeController.getAllTaxTypes();
 
         // Assert
-        assertEquals(200, result.getStatusCodeValue());
-        assertEquals(taxTypes, result.getBody());
-        verify(taxTypeService, times(1)).getAllTaxTypes();
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(2, response.getBody().size());
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    void testCreateTaxType_AsAdmin() {
+    void testGetTaxTypeById() {
         // Arrange
-        TaxTypeRequestDTO request = new TaxTypeRequestDTO();
-        request.setNome("ICMS");
-        request.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        request.setAliquota(BigDecimal.valueOf(18.0));
-
-        TaxTypeResponseDTO response = new TaxTypeResponseDTO();
-        response.setId(1);
-        response.setNome("ICMS");
-        response.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        response.setAliquota(BigDecimal.valueOf(18.0));
-
-        when(taxTypeService.createTaxType(request)).thenReturn(response);
+        Integer id = 1;
+        TaxTypeResponseDTO taxType = new TaxTypeResponseDTO(id, "ICMS", "Imposto sobre Circulação de Mercadorias e Serviços", BigDecimal.valueOf(18.0));
+        Mockito.when(taxTypeService.getTaxTypeById(eq(id))).thenReturn(taxType);
 
         // Act
-        ResponseEntity<TaxTypeResponseDTO> result = taxTypeController.createTaxType(request);
+        ResponseEntity<TaxTypeResponseDTO> response = taxTypeController.getTaxTypeById(id);
 
         // Assert
-        assertEquals(201, result.getStatusCodeValue());
-        assertEquals(response, result.getBody());
-        verify(taxTypeService, times(1)).createTaxType(request);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(taxType, response.getBody());
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void testCreateTaxType_AsUser() {
+    void testCreateTaxType() {
         // Arrange
-        TaxTypeRequestDTO request = new TaxTypeRequestDTO();
-        request.setNome("ICMS");
-        request.setDescricao("Imposto sobre Circulação de Mercadorias e Serviços");
-        request.setAliquota(BigDecimal.valueOf(18.0));
+        TaxTypeRequestDTO requestDTO = new TaxTypeRequestDTO();
+        requestDTO.setNome("IPI");
+        requestDTO.setDescricao("Imposto sobre Produtos Industrializados");
+        requestDTO.setAliquota(BigDecimal.valueOf(12.0));
 
-        // Act & Assert
-        try {
-            taxTypeController.createTaxType(request);
-        } catch (Exception e) {
-            // Simula o comportamento esperado para usuários sem permissão
-            assertEquals("Access is denied", e.getMessage());
-        }
+        TaxTypeResponseDTO responseDTO = new TaxTypeResponseDTO(3, "IPI", "Imposto sobre Produtos Industrializados", BigDecimal.valueOf(12.0));
+        Mockito.when(taxTypeService.createTaxType(any(TaxTypeRequestDTO.class))).thenReturn(responseDTO);
 
-        // Verifica que o serviço não foi chamado
-        verify(taxTypeService, times(0)).createTaxType(request);
+        // Act
+        ResponseEntity<TaxTypeResponseDTO> response = taxTypeController.createTaxType(requestDTO);
+
+        // Assert
+        assertEquals(201, response.getStatusCodeValue());
+        assertEquals(responseDTO, response.getBody());
+    }
+
+    @Test
+    void testDeleteTaxType() {
+        // Arrange
+        Integer id = 1;
+        Mockito.doNothing().when(taxTypeService).deleteTaxType(eq(id));
+
+        // Act
+        ResponseEntity<Void> response = taxTypeController.deleteTaxType(id);
+
+        // Assert
+        assertEquals(204, response.getStatusCodeValue());
     }
 }

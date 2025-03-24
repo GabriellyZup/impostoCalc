@@ -1,44 +1,36 @@
 package com.impostoCalc.model.test;
 
-import com.impostoCalc.model.Role;
+import com.impostoCalc.dtos.Role;
 import com.impostoCalc.model.User;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
     @Test
-    void testUserGettersAndSetters() {
+    void testUserDetails() {
         // Arrange
-        User user = new User();
         Integer id = 1;
         String username = "usuario123";
         String password = "senhaSegura";
         Role role = Role.USER;
 
         // Act
-        user.setId(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setRole(role);
+        User user = new User(id, username, password, role);
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
         // Assert
         assertEquals(id, user.getId());
         assertEquals(username, user.getUsername());
         assertEquals(password, user.getPassword());
-        assertEquals(role, user.getRole());
-    }
-
-    @Test
-    void testUserDefaultValues() {
-        // Arrange
-        User user = new User();
-
-        // Assert
-        assertNull(user.getId());
-        assertNull(user.getUsername());
-        assertNull(user.getPassword());
-        assertNull(user.getRole());
+        assertEquals("ROLE_USER", authorities.iterator().next().getAuthority());
+        assertTrue(user.isAccountNonExpired());
+        assertTrue(user.isAccountNonLocked());
+        assertTrue(user.isCredentialsNonExpired());
+        assertTrue(user.isEnabled());
     }
 }

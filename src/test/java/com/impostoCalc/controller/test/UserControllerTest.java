@@ -1,71 +1,73 @@
 package com.impostoCalc.controller.test;
 
 import com.impostoCalc.controller.UserController;
-import com.impostoCalc.dtos.UserRequestDTO;
-import com.impostoCalc.dtos.UserResponseDTO;
-import com.impostoCalc.service.UserService;
+import com.impostoCalc.dtos.Role;
+import com.impostoCalc.dtos.request.UserLoginRequestDTO;
+import com.impostoCalc.dtos.request.UserRegisterRequestDTO;
+import com.impostoCalc.dtos.response.UserLoginResponseDTO;
+import com.impostoCalc.dtos.response.UserRegisterResponseDTO;
+import com.impostoCalc.security.TokenService;
+import com.impostoCalc.service.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class UserControllerTest {
 
-    @InjectMocks
     private UserController userController;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
-    public UserControllerTest() {
+    @Mock
+    private TokenService tokenService;
+
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+        userController = new UserController(userServiceImpl, null, tokenService);
     }
 
     @Test
     void testRegisterUser() {
         // Arrange
-        UserRequestDTO request = new UserRequestDTO();
-        request.setUsername("admin");
-        request.setPassword("password");
+        UserRegisterRequestDTO requestDTO = new UserRegisterRequestDTO();
+        requestDTO.setUsername("usuario123");
+        requestDTO.setPassword("senhaSegura");
+        requestDTO.setRole(requestDTO.getRole());
 
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(1);
-        response.setUsername("admin");
-
-        when(userService.registerUser(request)).thenReturn(response);
+        UserRegisterResponseDTO responseDTO = new UserRegisterResponseDTO(1, "usuario123", Role.USER);
+        Mockito.when(userServiceImpl.registerUser(any(UserRegisterRequestDTO.class))).thenReturn(responseDTO);
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.registerUser(request);
+        ResponseEntity<UserRegisterResponseDTO> response = userController.registerUser(requestDTO);
 
         // Assert
-        assertEquals(201, result.getStatusCodeValue());
-        assertEquals(response, result.getBody());
-        verify(userService, times(1)).registerUser(request);
+        assertEquals(201, response.getStatusCodeValue());
+        assertEquals(responseDTO, response.getBody());
     }
 
     @Test
-    void testLoginUser() {
+    void testLogin() {
         // Arrange
-        UserRequestDTO request = new UserRequestDTO();
-        request.setUsername("admin");
-        request.setPassword("password");
+        UserLoginRequestDTO requestDTO = new UserLoginRequestDTO();
+        requestDTO.setUsername("usuario123");
+        requestDTO.setPassword("senhaSegura");
 
-        UserResponseDTO response = new UserResponseDTO();
-        response.setId(1);
-        response.setUsername("admin");
-
-        when(userService.loginUser(request)).thenReturn(response);
+        UserLoginResponseDTO responseDTO = new UserLoginResponseDTO("mocked-jwt-token");
+        Mockito.when(userServiceImpl.authenticateUser(any(UserLoginRequestDTO.class))).thenReturn(responseDTO);
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.loginUser(request);
+        ResponseEntity<UserLoginResponseDTO> response = userController.login(requestDTO);
 
         // Assert
-        assertEquals(200, result.getStatusCodeValue());
-        assertEquals(response, result.getBody());
-        verify(userService, times(1)).loginUser(request);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(responseDTO, response.getBody());
     }
 }

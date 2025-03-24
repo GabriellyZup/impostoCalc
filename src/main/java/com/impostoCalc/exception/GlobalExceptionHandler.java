@@ -6,16 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-//import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
-//@ControllerAdvice
-//@Profile("!dev")
+@RestControllerAdvice
+
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // Trata IllegalArgumentException (usada nas regras de negócio)
@@ -72,18 +72,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
-//        // Ignorar requisições do Swagger
-//        String path = request.getDescription(false);
-//        if (path.contains("/swagger-ui") || path.contains("/v3/api-docs")) {
-//            return null; // Deixe o Swagger lidar com suas próprias exceções
-//        }
-//        ErrorResponse errorResponse = new ErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR,
-//                "Erro interno no servidor",
-//                path
-//        );
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-//    }
+
 }

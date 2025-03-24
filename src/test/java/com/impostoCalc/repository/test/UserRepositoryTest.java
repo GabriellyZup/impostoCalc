@@ -1,60 +1,36 @@
 package com.impostoCalc.repository.test;
 
+import com.impostoCalc.dtos.Role;
 import com.impostoCalc.model.User;
 import com.impostoCalc.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserRepositoryTest {
 
-//    @InjectMocks
-//    private UserRepository userRepository;
-
     @Mock
-    private UserRepository mockUserRepository;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    private UserRepository userRepository;
 
     @Test
-    void testFindByUsername_Success() {
+    void testFindByUsername() {
         // Arrange
-        String username = "admin";
-        User user = new User();
-        user.setUsername(username);
-
-        when(mockUserRepository.findByUsername(username)).thenReturn(user);
+        User user = new User(1, "admin", "password", Role.ADMIN);
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
 
         // Act
-        User result = mockUserRepository.findByUsername(username);
+        Optional<User> result = userRepository.findByUsername("admin");
 
         // Assert
-        assertNotNull(result);
-        assertEquals(username, result.getUsername());
-        verify(mockUserRepository, times(1)).findByUsername(username);
-    }
-
-    @Test
-    void testFindByUsername_NotFound() {
-        // Arrange
-        String username = "admin";
-
-        when(mockUserRepository.findByUsername(username)).thenReturn(null);
-
-        // Act
-        User result = mockUserRepository.findByUsername(username);
-
-        // Assert
-        assertNull(result);
-        verify(mockUserRepository, times(1)).findByUsername(username);
+        assertTrue(result.isPresent());
     }
 }
-

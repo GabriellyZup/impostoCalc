@@ -15,18 +15,36 @@
 	</parent>
 
 	<groupId>com</groupId>
-	<artifactId>taxcalc</artifactId>
+	<artifactId>impostoCalc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>taxcalc</name>
-	<description>Demo project for Spring Boot</description>
+	<name>impostoCalc</name>
+	<description>Api de calculo de imposto</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
 
 	<properties>
 		<java.version>17</java.version>
-		<jackson.version>2.17.2</jackson.version>
-		<springdoc.version>2.5.0</springdoc.version>
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Spring Boot Starters -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -46,22 +64,34 @@
 		</dependency>
 
 		<!-- Jackson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--			<artifactId>jackson-databind</artifactId>-->
+<!--			<version>${jackson.version}</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--			<artifactId>jackson-datatype-jsr310</artifactId>-->
+<!--			<version>${jackson.version}</version>-->
+<!--		</dependency>-->
 
 		<!-- SpringDoc OpenAPI -->
+<!--		<dependency>-->
+<!--			<groupId>org.springdoc</groupId>-->
+<!--			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>-->
+<!--			<version>2.4.0</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.springdoc</groupId>-->
+<!--			<artifactId>springdoc-openapi-ui</artifactId>-->
+<!--			<version>1.6.14</version>-->
+<!--		</dependency>-->
+
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.5.0</version>
+			<version>2.8.3</version>
 		</dependency>
 
 		<!-- Database -->
@@ -98,6 +128,39 @@
 			<scope>test</scope>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>com.auth0</groupId>-->
+<!--			<artifactId>java-jwt</artifactId>-->
+<!--			<version>4.4.0</version>-->
+<!--		</dependency>-->
+
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -129,7 +192,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.8</version>
+				<version>0.8.12</version>
 				<executions>
 					<execution>
 						<goals>

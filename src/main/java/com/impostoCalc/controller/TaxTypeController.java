@@ -1,11 +1,14 @@
 package com.impostoCalc.controller;
 
-import com.impostoCalc.dtos.TaxTypeRequestDTO;
-import com.impostoCalc.dtos.TaxTypeResponseDTO;
+import com.impostoCalc.dtos.request.TaxTypeRequestDTO;
+import com.impostoCalc.dtos.response.TaxTypeResponseDTO;
 import com.impostoCalc.service.TaxTypeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,43 +17,37 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tipos")
-@Tag(name = "TaxType", description = "Gerenciamento de Tipos de Impostos")
+@Tag(name = "Tipos de Imposto", description = "Gerenciamento de tipos de impostos")
+@SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class TaxTypeController {
 
     private final TaxTypeService taxTypeService;
 
-    @Autowired
-    public TaxTypeController(TaxTypeService taxTypeService) {
-        this.taxTypeService = taxTypeService;
-    }
-
     @GetMapping
     @Operation(summary = "Listar todos os tipos de impostos")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // Permite acesso para USER e ADMIN
     public ResponseEntity<List<TaxTypeResponseDTO>> getAllTaxTypes() {
-        List<TaxTypeResponseDTO> taxTypes = taxTypeService.getAllTaxTypes();
-        return ResponseEntity.ok(taxTypes);
+        return ResponseEntity.ok(taxTypeService.getAllTaxTypes());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obter detalhes de um tipo de imposto pelo ID")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // Permite acesso para USER e ADMIN
     public ResponseEntity<TaxTypeResponseDTO> getTaxTypeById(@PathVariable Integer id) {
-        TaxTypeResponseDTO taxType = taxTypeService.getTaxTypeById(id);
-        return ResponseEntity.ok(taxType);
+        return ResponseEntity.ok(taxTypeService.getTaxTypeById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Cadastrar um novo tipo de imposto")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaxTypeResponseDTO> createTaxType(@RequestBody TaxTypeRequestDTO requestDTO) {
-        TaxTypeResponseDTO createdTaxType = taxTypeService.createTaxType(requestDTO);
-        return ResponseEntity.status(201).body(createdTaxType);
+    @PreAuthorize("hasRole('ADMIN')") // Apenas ADMIN pode cadastrar
+    @Operation(summary = "Cadastrar novo tipo de imposto (ADMIN)")
+    public ResponseEntity<TaxTypeResponseDTO> createTaxType(@RequestBody @Valid TaxTypeRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(taxTypeService.createTaxType(requestDTO));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Excluir um tipo de imposto pelo ID")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')") // Apenas ADMIN pode excluir
+    @Operation(summary = "Excluir tipo de imposto pelo ID (ADMIN)")
     public ResponseEntity<Void> deleteTaxType(@PathVariable Integer id) {
         taxTypeService.deleteTaxType(id);
         return ResponseEntity.noContent().build();
