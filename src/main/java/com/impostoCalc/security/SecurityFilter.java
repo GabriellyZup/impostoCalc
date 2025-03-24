@@ -25,6 +25,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
 
     public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+        this.tokenService = tokenService;
     }//construtor criado para atender a classe de teste
 
 

@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/tipos", "/api/tipos/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/tipos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/tipos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/calculo").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/calculo").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);

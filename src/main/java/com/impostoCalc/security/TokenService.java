@@ -1,10 +1,5 @@
 package com.impostoCalc.config;
 
-//import com.impostoCalc.jwt.JWT;
-//import com.impostoCalc.jwt.algorithms.Algorithm;
-//import com.impostoCalc.jwt.exceptions.JWTCreationException;
-//import com.impostoCalc.jwt.exceptions.JWTVerificationException;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -17,8 +12,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-//import static org.springframework.security.config.Elements.JWT;
-
 @Service
 public class TokenService {
 
@@ -29,7 +22,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("taxcalc-api")
+                    .withIssuer("impostocalc")
                     .withSubject(user.getUsername())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
@@ -42,7 +35,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("taxcalc-api")
+                    .withIssuer("impostocalc")
                     .build()
                     .verify(token)
                     .getSubject();

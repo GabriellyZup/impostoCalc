@@ -1,8 +1,8 @@
 package com.impostoCalc.service.test;
 
-import com.impostoCalc.dtos.UserRequestDTO;
-import com.impostoCalc.dtos.UserResponseDTO;
-import com.impostoCalc.model.Role;
+import com.impostoCalc.dtos.request.UserRegisterRequestDTO;
+import com.impostoCalc.dtos.response.UserRegisterResponseDTO;
+import com.impostoCalc.dtos.UserRole;
 import com.impostoCalc.model.User;
 import com.impostoCalc.repository.UserRepository;
 import com.impostoCalc.service.UserService;
@@ -34,22 +34,22 @@ class UserServiceTest {
     @Test
     void testRegisterUser_Success() {
         // Arrange
-        UserRequestDTO requestDTO = new UserRequestDTO();
+        UserRegisterRequestDTO requestDTO = new UserRegisterRequestDTO();
         requestDTO.setUsername("usuario123");
         requestDTO.setPassword("senhaSegura");
-        requestDTO.setRole(Role.USER);
+        requestDTO.setRole(UserRole.USER);
 
         User user = new User();
         user.setId(1);
         user.setUsername("usuario123");
-        user.setRole(Role.USER);
+        user.setUserRole(UserRole.USER);
 
         Mockito.when(userRepository.findByUsername("usuario123")).thenReturn(null);
         Mockito.when(passwordEncoder.encode("senhaSegura")).thenReturn("senhaCodificada");
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
 
         // Act
-        UserResponseDTO result = userService.registerUser(requestDTO);
+        UserRegisterResponseDTO result = userService.registerUser(requestDTO);
 
         // Assert
         assertNotNull(result);
@@ -59,7 +59,7 @@ class UserServiceTest {
     @Test
     void testRegisterUser_UsernameExists() {
         // Arrange
-        UserRequestDTO requestDTO = new UserRequestDTO();
+        UserRegisterRequestDTO requestDTO = new UserRegisterRequestDTO();
         requestDTO.setUsername("usuario123");
 
         Mockito.when(userRepository.findByUsername("usuario123")).thenReturn(new User());

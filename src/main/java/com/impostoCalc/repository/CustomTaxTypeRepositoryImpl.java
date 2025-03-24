@@ -1,26 +1,26 @@
 package com.impostoCalc.repository;
 
 import com.impostoCalc.model.TaxType;
-import com.impostoCalc.repository.CustomTaxTypeRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public class CustomTaxTypeRepositoryImpl implements CustomTaxTypeRepository {
+public class TaxTypeRepositoryImpl {
 
     @PersistenceContext
-    public EntityManager entityManager;
+    private EntityManager entityManager;
 
-    @Override
-    public Optional<TaxType> findByName(String nome) {
-        String jpql = "SELECT t FROM TaxType t WHERE t.nome = :nome";
-        TypedQuery<TaxType> query = entityManager.createQuery(jpql, TaxType.class);
-        query.setParameter("nome", nome);
+//    public Optional<TaxType> findByNome(String name) {
+//        String jpql = "SELECT t FROM TaxType t WHERE t.nome = :name";
+//        TypedQuery<TaxType> query = entityManager.createQuery(jpql, TaxType.class);
+//        query.setParameter("name", name);
+//        return query.getResultStream().findFirst();
+//    }
 
-        return query.getResultStream().findFirst();
+    public List<TaxType> findByCustomQuery(String query) {
+        return entityManager.createQuery(query, TaxType.class).getResultList();
     }
 }

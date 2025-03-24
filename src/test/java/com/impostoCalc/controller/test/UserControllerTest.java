@@ -1,9 +1,10 @@
 package com.impostoCalc.controller.test;
 
-import com.impostoCalc.config.TokenService;
+import com.impostoCalc.security.TokenService;
 import com.impostoCalc.controller.UserController;
-import com.impostoCalc.dtos.UserRequestDTO;
-import com.impostoCalc.dtos.UserResponseDTO;
+import com.impostoCalc.dtos.request.UserRegisterRequestDTO;
+import com.impostoCalc.dtos.response.UserRegisterResponseDTO;
+import com.impostoCalc.dtos.Role;
 import com.impostoCalc.model.User;
 import com.impostoCalc.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,18 +41,18 @@ class UserControllerTest {
     @Test
     void testRegisterUser() {
         // Arrange
-        UserRequestDTO request = new UserRequestDTO();
+        UserRegisterRequestDTO request = new UserRegisterRequestDTO();
         request.setUsername("admin");
         request.setPassword("password");
 
-        UserResponseDTO response = new UserResponseDTO();
+        UserRegisterResponseDTO response = new UserRegisterResponseDTO();
         response.setId(1);
         response.setUsername("admin");
 
         when(userService.registerUser(request)).thenReturn(response);
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.registerUser(request);
+        ResponseEntity<UserRegisterResponseDTO> result = userController.registerUser(request);
 
         // Assert
         assertEquals(201, result.getStatusCodeValue());
@@ -62,18 +63,19 @@ class UserControllerTest {
     @Test
     void testLoginUser() {
         // Arrange
-        UserRequestDTO request = new UserRequestDTO();
+        UserRegisterRequestDTO request = new UserRegisterRequestDTO();
         request.setUsername("admin");
         request.setPassword("password");
 
-        User user = new User("admin", "password", "ADMIN");
+        User user = new User("admin", "password", Role.ADMIN); // Corrigido para usar Role.ADMIN
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+
         when(authenticationManager.authenticate(authToken)).thenReturn(authToken);
 
         String token = "mocked-jwt-token";
         when(tokenService.generateToken(user)).thenReturn(token);
 
-        UserResponseDTO response = new UserResponseDTO();
+        UserRegisterResponseDTO response = new UserRegisterResponseDTO();
         response.setId(1);
         response.setUsername("admin");
         response.setToken(token);
@@ -81,7 +83,7 @@ class UserControllerTest {
         when(userService.loginUser(request)).thenReturn(response);
 
         // Act
-        ResponseEntity<UserResponseDTO> result = userController.loginUser(request);
+        ResponseEntity<UserRegisterResponseDTO> result = userController.loginUser(request);
 
         // Assert
         assertEquals(200, result.getStatusCodeValue());

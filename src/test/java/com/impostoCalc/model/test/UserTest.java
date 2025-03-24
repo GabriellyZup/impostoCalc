@@ -1,6 +1,6 @@
 package com.impostoCalc.model.test;
 
-import com.impostoCalc.model.Role;
+import com.impostoCalc.dtos.Role;
 import com.impostoCalc.model.User;
 import org.junit.jupiter.api.Test;
 

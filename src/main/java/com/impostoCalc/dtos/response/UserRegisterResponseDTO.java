@@ -1,6 +1,6 @@
-package com.impostoCalc.dtos;
+package com.impostoCalc.dtos.response;
 
-import com.impostoCalc.model.Role;
+import com.impostoCalc.dtos.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Objeto de resposta para os detalhes de um usuário.")

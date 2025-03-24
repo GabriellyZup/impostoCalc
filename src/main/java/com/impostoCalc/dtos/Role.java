@@ -1,12 +1,12 @@
-package com.impostoCalc.model;
+package com.impostoCalc.dtos;
 
-public enum Role {
+public enum UserRole {
     ADMIN("admin"),
     USER("user");
 
     private String role;
 
-    Role(String role){
+    UserRole(String role){
         this.role = role;
     }
 

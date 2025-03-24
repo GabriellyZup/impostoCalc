@@ -1,6 +1,6 @@
-package com.impostoCalc.dtos;
+package com.impostoCalc.dtos.request;
 
-import com.impostoCalc.model.Role;
+import com.impostoCalc.dtos.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
