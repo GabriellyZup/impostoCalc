@@ -1,22 +1,21 @@
 package com.impostoCalc.service;
 
-import com.impostoCalc.dtos.TaxCalculationRequestDTO;
-import com.impostoCalc.dtos.TaxCalculationResponseDTO;
+import com.impostoCalc.dtos.request.TaxCalculationRequestDTO;
+import com.impostoCalc.dtos.response.TaxCalculationResponseDTO;
 import com.impostoCalc.model.TaxType;
 import com.impostoCalc.repository.TaxTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TaxCalculationService {
 
-    @Autowired
-    private TaxTypeRepository taxTypeRepository;
+    private final TaxTypeRepository taxTypeRepository;
 
     public TaxCalculationResponseDTO calculateTax(TaxCalculationRequestDTO request) {
         TaxType taxType = taxTypeRepository.findById(request.getTipoImpostoId())

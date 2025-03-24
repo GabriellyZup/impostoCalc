@@ -1,11 +1,11 @@
 package com.impostoCalc.dtos.test;
 
-import com.impostoCalc.dtos.TaxCalculationRequestDTO;
+import com.impostoCalc.dtos.request.TaxCalculationRequestDTO;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TaxCalculationRequestDTOTest {
 
@@ -13,11 +13,15 @@ class TaxCalculationRequestDTOTest {
     void testTaxCalculationRequestDTO() {
         // Arrange
         TaxCalculationRequestDTO requestDTO = new TaxCalculationRequestDTO();
-        requestDTO.setTipoImpostoId(1);
-        requestDTO.setValorBase(BigDecimal.valueOf(1000.0));
+        Integer tipoImpostoId = 1;
+        BigDecimal valorBase = BigDecimal.valueOf(100.00);
+
+        // Act
+        requestDTO.setTipoImpostoId(tipoImpostoId);
+        requestDTO.setValorBase(valorBase);
 
         // Assert
-        assertEquals(1, requestDTO.getTipoImpostoId());
-        assertEquals(BigDecimal.valueOf(1000.0), requestDTO.getValorBase());
+        assertEquals(tipoImpostoId, requestDTO.getTipoImpostoId());
+        assertEquals(valorBase, requestDTO.getValorBase());
     }
 }

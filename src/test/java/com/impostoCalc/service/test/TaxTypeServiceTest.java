@@ -1,7 +1,7 @@
 package com.impostoCalc.service.test;
 
-import com.impostoCalc.dtos.TaxTypeRequestDTO;
-import com.impostoCalc.dtos.TaxTypeResponseDTO;
+import com.impostoCalc.dtos.request.TaxTypeRequestDTO;
+import com.impostoCalc.dtos.response.TaxTypeResponseDTO;
 import com.impostoCalc.model.TaxType;
 import com.impostoCalc.repository.CustomTaxTypeRepository;
 import com.impostoCalc.repository.TaxTypeRepository;
@@ -11,12 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class TaxTypeServiceTest {
 
@@ -25,13 +28,10 @@ class TaxTypeServiceTest {
     @Mock
     private TaxTypeRepository taxTypeRepository;
 
-    @Mock
-    private CustomTaxTypeRepository customTaxTypeRepository;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        taxTypeService = new TaxTypeService(taxTypeRepository, customTaxTypeRepository);
+        taxTypeService = new TaxTypeService(taxTypeRepository);
     }
 
     @Test
@@ -47,7 +47,7 @@ class TaxTypeServiceTest {
         taxType2.setNome("ISS");
         taxType2.setAliquota(BigDecimal.valueOf(5));
 
-        Mockito.when(taxTypeRepository.findAll()).thenReturn(List.of(taxType1, taxType2));
+        when(taxTypeRepository.findAll()).thenReturn(List.of(taxType1, taxType2));
 
         // Act
         List<TaxTypeResponseDTO> result = taxTypeService.getAllTaxTypes();
@@ -65,7 +65,7 @@ class TaxTypeServiceTest {
         taxType.setId(1);
         taxType.setNome("ICMS");
 
-        Mockito.when(taxTypeRepository.findById(1)).thenReturn(Optional.of(taxType));
+        when(taxTypeRepository.findById(1)).thenReturn(Optional.of(taxType));
 
         // Act
         TaxTypeResponseDTO result = taxTypeService.getTaxTypeById(1);
@@ -77,12 +77,14 @@ class TaxTypeServiceTest {
 
     @Test
     void testGetTaxTypeById_NotFound() {
-        // Arrange
-        Mockito.when(taxTypeRepository.findById(1)).thenReturn(Optional.empty());
+        when(taxTypeRepository.findById(1)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> taxTypeService.getTaxTypeById(1));
-        assertEquals("Tipo de imposto não encontrado.", exception.getMessage());
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
+                taxTypeService.getTaxTypeById(1)
+        );
+
+        assertEquals("Tipo de imposto não encontrado.", exception.getReason());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
     @Test
@@ -97,7 +99,7 @@ class TaxTypeServiceTest {
         taxType.setId(1);
         taxType.setNome("ICMS");
 
-        Mockito.when(taxTypeRepository.save(Mockito.any(TaxType.class))).thenReturn(taxType);
+        when(taxTypeRepository.save(Mockito.any(TaxType.class))).thenReturn(taxType);
 
         // Act
         TaxTypeResponseDTO result = taxTypeService.createTaxType(requestDTO);

@@ -2,9 +2,15 @@ package com.impostoCalc.dtos.response;
 
 import com.impostoCalc.dtos.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Schema(description = "Objeto de resposta para os detalhes de um usuário.")
-public class UserResponseDTO {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(description = "Objeto de resposta para o registro de um usuário.")
+public class UserRegisterResponseDTO {
 
     @Schema(description = "ID único do usuário.", example = "1")
     private Integer id;
@@ -15,38 +21,4 @@ public class UserResponseDTO {
     @Schema(description = "Papel do usuário no sistema.", example = "USER")
     private Role role;
 
-    @Schema(description = "Token JWT para autenticação.", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-    private String token;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

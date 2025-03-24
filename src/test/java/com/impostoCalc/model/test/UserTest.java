@@ -3,38 +3,34 @@ package com.impostoCalc.model.test;
 import com.impostoCalc.dtos.Role;
 import com.impostoCalc.model.User;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.GrantedAuthority;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
     @Test
-    void testUserModel() {
+    void testUserDetails() {
         // Arrange
-        User user = new User();
-        user.setId(1);
-        user.setUsername("admin");
-        user.setPassword("password");
-        user.setRole(Role.ADMIN);
+        Integer id = 1;
+        String username = "usuario123";
+        String password = "senhaSegura";
+        Role role = Role.USER;
+
+        // Act
+        User user = new User(id, username, password, role);
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
         // Assert
-        assertEquals(1, user.getId());
-        assertEquals("admin", user.getUsername());
-        assertEquals("password", user.getPassword());
-        assertEquals(Role.ADMIN, user.getRole());
-    }
-
-    @Test
-    void testUserConstructor() {
-        // Arrange
-        User user = new User(1, "admin", "password", Role.ADMIN);
-
-        // Assert
-        assertNotNull(user);
-        assertEquals(1, user.getId());
-        assertEquals("admin", user.getUsername());
-        assertEquals("password", user.getPassword());
-        assertEquals(Role.ADMIN, user.getRole());
+        assertEquals(id, user.getId());
+        assertEquals(username, user.getUsername());
+        assertEquals(password, user.getPassword());
+        assertEquals("ROLE_USER", authorities.iterator().next().getAuthority());
+        assertTrue(user.isAccountNonExpired());
+        assertTrue(user.isAccountNonLocked());
+        assertTrue(user.isCredentialsNonExpired());
+        assertTrue(user.isEnabled());
     }
 }

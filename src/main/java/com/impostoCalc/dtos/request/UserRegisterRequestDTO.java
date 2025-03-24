@@ -4,13 +4,20 @@ import com.impostoCalc.dtos.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Data;
 
-@Schema(description = "Objeto de requisição para registrar ou autenticar um usuário.")
-public class UserRequestDTO {
+@Data
+
+@Schema(description = "Objeto de requisição para registrar um novo usuário.")
+@Getter
+@Setter
+public class UserRegisterRequestDTO {
 
     @NotBlank(message = "O nome de usuário é obrigatório.")
     @Size(min = 3, max = 50, message = "O nome de usuário deve ter entre 3 e 50 caracteres.")
-    @Schema(description = "Nome de usuário para autenticação.", example = "usuario123", required = true)
+    @Schema(description = "Nome de usuário para registro.", example = "usuario123", required = true)
     private String username;
 
     @NotBlank(message = "A senha é obrigatória.")
@@ -21,27 +28,6 @@ public class UserRequestDTO {
     @Schema(description = "Papel do usuário no sistema.", example = "ADMIN", required = true)
     private Role role;
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

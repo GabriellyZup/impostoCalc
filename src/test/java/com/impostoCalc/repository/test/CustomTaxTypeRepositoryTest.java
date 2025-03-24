@@ -1,57 +1,52 @@
 package com.impostoCalc.repository.test;
 
-import model.TaxType;
+import com.impostoCalc.model.TaxType;
+import com.impostoCalc.repository.CustomTaxTypeRepository;
+import com.impostoCalc.repository.TaxTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import repository.CustomTaxTypeRepositoryImpl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CustomTaxTypeRepositoryImplTest {
+class CustomTaxTypeRepositoryTest {
 
-    private CustomTaxTypeRepositoryImpl customTaxTypeRepository;
+    @Mock
+    private TaxTypeRepository taxTypeRepository; // Mock do repositório
 
     @Mock
     private EntityManager entityManager;
 
-    @Mock
-    private TypedQuery<TaxType> typedQuery;
+    private CustomTaxTypeRepository customTaxTypeRepository; // Assume que TaxTypeRepository implementa CustomTaxTypeRepository
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        customTaxTypeRepository = new CustomTaxTypeRepositoryImpl();
-        customTaxTypeRepository.entityManager = entityManager;
+        customTaxTypeRepository = taxTypeRepository; // TaxTypeRepository já inclui CustomTaxTypeRepository
     }
 
     @Test
-    void testFindByName() {
+    void testFindByNome() {
         // Arrange
-        String name = "ICMS";
+        String nome = "ICMS";
         TaxType taxType = new TaxType();
-        taxType.setId(1);
-        taxType.setName(name);
-        taxType.setDescription("Imposto sobre Circulação de Mercadorias e Serviços");
-        taxType.setRate(BigDecimal.valueOf(18.0));
+        taxType.setNome(nome);
 
-        when(entityManager.createQuery(anyString(), eq(TaxType.class))).thenReturn(typedQuery);
-        when(typedQuery.setParameter(eq("name"), eq(name))).thenReturn(typedQuery);
-        when(typedQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(taxType));
+        // Define o comportamento do mock
+        when(taxTypeRepository.findByNome(nome)).thenReturn(Optional.of(taxType));
 
         // Act
-        Optional<TaxType> result = customTaxTypeRepository.findByName(name);
+        Optional<TaxType> result = customTaxTypeRepository.findByNome(nome);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(name, result.get().getName());
+        assertEquals(nome, result.get().getNome());
     }
 }

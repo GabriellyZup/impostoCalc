@@ -1,7 +1,7 @@
 package com.impostoCalc.repository.test;
 
 import com.impostoCalc.model.TaxType;
-import com.impostoCalc.repository.TaxTypeRepositoryImpl;
+import com.impostoCalc.repository.CustomTaxTypeRepositoryImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class TaxTypeRepositoryImplTest {
+class CustomTaxTypeRepositoryImplTest {
 
     @Mock
     private EntityManager entityManager;
@@ -22,13 +22,13 @@ class TaxTypeRepositoryImplTest {
     @Mock
     private TypedQuery<TaxType> typedQuery;
 
-    private TaxTypeRepositoryImpl taxTypeRepository;
+    private CustomTaxTypeRepositoryImpl taxTypeRepository;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        taxTypeRepository = new TaxTypeRepositoryImpl();
-        taxTypeRepository.entityManager = entityManager;
+        taxTypeRepository = new CustomTaxTypeRepositoryImpl();
+        taxTypeRepository.setEntityManager(entityManager);
     }
 
     @Test
@@ -46,5 +46,7 @@ class TaxTypeRepositoryImplTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("ICMS", result.get(0).getNome());
+        verify(entityManager).createQuery(query, TaxType.class); // Ver se o método foi chamado
     }
+
 }
