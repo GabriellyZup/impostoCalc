@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor // Lombok para injeção de dependências
+@RequiredArgsConstructor
 public class TaxTypeService {
 
     private final TaxTypeRepository taxTypeRepository;
@@ -48,11 +48,6 @@ public class TaxTypeService {
         taxTypeRepository.deleteById(id);
     }
 
-//    public TaxTypeResponseDTO getTaxTypeByName(String nome) {
-//        TaxType taxType = customTaxTypeRepository.findByNome(nome)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de imposto não encontrado com o nome fornecido."));
-//        return toResponseDTO(taxType);
-//    }
 
     private TaxTypeResponseDTO toResponseDTO(TaxType taxType) {
         TaxTypeResponseDTO responseDTO = new TaxTypeResponseDTO();
