@@ -18,3 +18,5 @@ jobs:
 
     - name: Build and Test with Maven
       run: ./mvnw clean package
+
+      git update-index --chmod=+x mvnw
