@@ -77,7 +77,6 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        // Implementação do toString para evitar erros
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +

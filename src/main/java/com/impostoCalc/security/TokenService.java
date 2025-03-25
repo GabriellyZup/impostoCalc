@@ -27,7 +27,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("impostocalc")
                     .withSubject(user.getUsername())
-                    .withClaim("role", user.getRole().name()) // Adiciona a role como claim
+                    .withClaim("role", user.getRole().name())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
