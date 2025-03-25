@@ -22,7 +22,7 @@ public class TaxCalculationController {
     private final TaxCalculationService taxCalculationService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // Permite acesso para USER e ADMIN
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Calcular imposto")
     public ResponseEntity<TaxCalculationResponseDTO> calculateTax(@RequestBody @Valid TaxCalculationRequestDTO request) {
         return ResponseEntity.ok(taxCalculationService.calculateTax(request));

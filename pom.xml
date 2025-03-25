@@ -219,6 +219,12 @@
 			<testResource>
 				<directory>src/test/resources</directory>
 			</testResource>
+			<testResource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>.env</include>
+				</includes>
+			</testResource>
 		</testResources>
 	</build>
 
