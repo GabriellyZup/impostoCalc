@@ -53,7 +53,7 @@ A API foi desenvolvida para gerenciar e calcular impostos no Brasil. Ela permite
 Antes de executar o projeto, certifique-se de ter:
 - [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) instalado.
 - [Maven](https://maven.apache.org/download.cgi) instalado.
-- [PostgreSQL](https://www.postgresql.org/download/) configurado e rodando.
+- [PostgreSQL](https://www.postgresql.org/download/) configurado e rodando
 
 
 ### Passos para Configuração Local
