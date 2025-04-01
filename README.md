@@ -15,16 +15,17 @@ API RESTful para gerenciamento e cálculo de impostos no Brasil. Desenvolvida co
 
 ---
 
-## Descrição do Programa
+## 🔍 Visão Geral
 A API foi desenvolvida para gerenciar e calcular impostos no Brasil. Ela permite:
 - Gerenciar tipos de impostos (ICMS, ISS, IPI, etc.).
 - Calcular o valor do imposto com base no tipo e no valor base fornecido.
 - Autenticar e autorizar usuários utilizando JWT.
 - Restringir o acesso a endpoints sensíveis com base no papel do usuário (`USER` ou `ADMIN`).
+- Documentação interativa via Swagger
 
 ---
 
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 | Categoria          | Ferramentas                                                                 |
 |--------------------|-----------------------------------------------------------------------------|
 | Backend            | [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html), [Spring Boot](https://spring.io/projects/spring-boot), [Spring Data JPA](https://spring.io/projects/spring-data-jpa), [Spring Security](https://spring.io/projects/spring-security) |
@@ -56,7 +57,7 @@ Antes de executar o projeto, certifique-se de ter:
 - [PostgreSQL](https://www.postgresql.org/download/) configurado e rodando
 
 
-### Passos para Configuração Local
+## 🚀 Executando o Projeto
 1. **Clone o repositório:**
 ```bash
         git clone https://github.com/GabriellyZup/impostoCalc.git
@@ -65,21 +66,21 @@ Antes de executar o projeto, certifique-se de ter:
 
 2. **Configure as variáveis de ambiente:**
 Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-```env
-    SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/impostoCalc
-    SPRING_DATASOURCE_USERNAME=postgres
-    SPRING_DATASOURCE_PASSWORD=postgres
-    JWT_SECRET=secret-key-123456
+``` env
+     SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/impostoCalc
+     SPRING_DATASOURCE_USERNAME=postgres
+     SPRING_DATASOURCE_PASSWORD=postgres
+     JWT_SECRET=secret-key-123456
 ```
 
-3. **Execute o projeto:**
+3. **Execute:**
 ```bash
-mvn spring-boot:run
+      mvn spring-boot:run
 ```
 
 4. A aplicação estará disponível em: [http://localhost:8081](http://localhost:8081)
 
-## Documentação da API:
+## 📚 Documentação da API:
 Acesse o Swagger em: [http://localhost:8081/swagger-ui](http://localhost:8081/swagger-ui)
 
 ## Testando a API
@@ -98,10 +99,16 @@ Acesse o Swagger em: [http://localhost:8081/swagger-ui](http://localhost:8081/sw
 ## Exemplos de Entrada e Saída
 
 
-## Endpoints
+## 🔐 Endpoints Principais
+
+### Autenticação
+| Método | Endpoint           | Descrição                          | Acesso    |
+|--------|--------------------|------------------------------------|-----------|
+| POST   | `/user/login`      | Gera token JWT                     | Público   |
+| POST   | `/user/register`   | Registra novos usuários            | Público   |
 
 
-### Gerenciamento de Usuários
+
 
 ### POST /user/login
 Autentica usuários e gera um token JWT.
@@ -143,7 +150,12 @@ Autentica usuários e gera um token JWT.
    ```
 
 
-### Gerenciamento de Tipos de Impostos
+### Gerenciamento de Impostos
+| Método | Endpoint           | Descrição                          | Acesso    |
+|--------|--------------------|------------------------------------|-----------|
+| GET    | `/tipos`           | Lista todos os tipos de impostos   | Público   |
+| POST   | `/tipos`           | Cria novo tipo de imposto          | ADMIN     |
+| DELETE | `/tipos/{id}`      | Exclui tipo de imposto             | ADMIN 
 
 ### GET /tipos**  
 Retorna a lista de todos os tipos de impostos cadastrados.  
@@ -179,12 +191,12 @@ Retorna os detalhes de um tipo de imposto específico pelo ID.
 
 **Resposta (200):**
 ```json
-{
-  "id": 1,
-  "nome": "ICMS",
-  "descricao": "Imposto sobre Circulação de Mercadorias e Serviços",
-  "aliquota": 18.0
-}
+        {
+          "id": 1,
+          "nome": "ICMS",
+          "descricao": "Imposto sobre Circulação de Mercadorias e Serviços",
+          "aliquota": 18.0
+        }
 ```
 
 **Saída:**
@@ -196,6 +208,20 @@ Retorna os detalhes de um tipo de imposto específico pelo ID.
           "aliquota": 12.0
         }
 ```
+
+---
+
+### DELETE /tipos/{id}
+        Exclui um tipo de imposto pelo ID. **Acesso restrito ao papel ADMIN.**
+
+**Resposta (204):** Sem conteúdo.
+
+
+### Cálculo de Impostos
+| Método | Endpoint           | Descrição                          | Acesso        |
+|--------|--------------------|------------------------------------|---------------|
+| POST   | `/calculo`         | Calcula valor do imposto           | USER, ADMIN   |
+
 
 ### Calcular Imposto (POST /calculo)
 **Entrada:**
@@ -215,28 +241,93 @@ Retorna os detalhes de um tipo de imposto específico pelo ID.
           "valorImposto": 180.0
         }
    ```
+# 🐳 Containerização
+O projeto usa o **Maven Jib Plugin** para construir imagens OCI (compatíveis com Podman/Docker):
 
----
+## Build da imagem:
+```bash
+        mvn compile jib:dockerBuild -Dimage=impostocalc:latest
+```
 
-### DELETE /tipos/{id}
-        Exclui um tipo de imposto pelo ID. **Acesso restrito ao papel ADMIN.**
+## Execute com Podman:
 
-        **Resposta (204):** Sem conteúdo.
 
-        ### 2. Cálculo de Impostos
-        **POST /calculo**  
-        Calcula o valor do imposto com base no tipo de imposto e no valor base.  
-        **Acesso liberado para USER e ADMIN.**
+```yaml
 
-        **Entrada:**
-        ```
+version: '3'
+services:
+    app:
+      image: impostocalc:latest
+      ports:
+        - "8081:8081"
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/impostocalc
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=postgres
+      depends_on:
+        - db
 
-## Observações
-- A containerização está em progresso. O arquivo `Dockerfile` e o `docker-compose.yml` serão ajustados em breve.
-- O pipeline de CI/CD com GitHub Actions está em fase inicial e será aprimorado.
+    db:
+      image: postgres:13
+      environment:
+        - POSTGRES_DB=impostocalc
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - "5432:5432"
+```
+
+
+
+# 🤖 CI/CD (GitHub Actions)
+O fluxo de CI inclui:
+- Testes com PostgreSQL em container
+- Build da aplicação
+- Cobertura de testes via JaCoCo
+## Arquivo: .github/workflows/ci.yml
+```yaml
+        name: CI
+
+        on: [push]
+
+        jobs:
+          build:
+            runs-on: ubuntu-latest
+            steps:
+              - uses: actions/checkout@v2
+              - name: Set up JDK 17
+                uses: actions/setup-java@v2
+                with:
+                  java-version: '17'
+                  distribution: 'temurin'
+              - name: Build with Maven
+                run: mvn clean install
+  ```
+
+# ⁉️ Problemas Conhecidos
+- **Containerização**: A integração com PostgreSQL via Docker requer ajustes nas variáveis de ambiente.
+- **CI/CD**: Testes end-to-end ainda não implementados.
 
 ---
 
 ## Contribuição
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
-        
+
+Para contribuir com o projeto, siga os passos abaixo:
+
+### Faça um fork do projeto
+
+### Crie uma branch:
+```bash
+        git checkout -b feature/nova-feature
+```
+
+### Commit suas mudanças:
+```bash
+        git commit -m 'Adiciona nova feature'
+```
+
+### Push para a branch:
+```bash
+        git push origin feature/nova-feature
+```
+
+### Abra um Pull Request
