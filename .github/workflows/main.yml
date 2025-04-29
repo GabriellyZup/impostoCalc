@@ -46,7 +46,7 @@ jobs:
           echo "JWT_SECRET_KEY=secret-key-123456" >> .env
 
       - name: Build and Test with Maven
-        run: ./mvnw clean package
+        run: mvn clean package
         env:
           DB_HOST: localhost
           DB_PORT: 5432
