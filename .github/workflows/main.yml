@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CI with PostgreSQL
 
 on:
   push:
@@ -10,18 +10,50 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: impostocalc
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create .env file
+        run: |
+          echo "spring.application.name=impostoCalc" > .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_NAME=impostocalc" >> .env
+          echo "DB_USERNAME=postgres" >> .env
+          echo "DB_PASSWORD=postgres" >> .env
+          echo "JWT_SECRET_KEY=secret-key-123456" >> .env
+
       - name: Build and Test with Maven
-        run: mvn clean package
+        run: ./mvnw clean package
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: impostocalc
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          JWT_SECRET_KEY: secret-key-123456
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
