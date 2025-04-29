@@ -35,25 +35,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create .env file
-        run: |
-          echo "spring.application.name=impostoCalc" > .env
-          echo "DB_HOST=localhost" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "DB_NAME=impostocalc" >> .env
-          echo "DB_USERNAME=postgres" >> .env
-          echo "DB_PASSWORD=postgres" >> .env
-          echo "JWT_SECRET_KEY=secret-key-123456" >> .env
-
-      - name: Build and Test with Maven
-        run: mvn clean package
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: impostocalc
-          DB_USERNAME: postgres
-          DB_PASSWORD: postgres
-          JWT_SECRET_KEY: secret-key-123456
+      - name: Build and run unit tests with Maven
+        run: mvn clean test
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
