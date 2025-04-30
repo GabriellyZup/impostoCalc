@@ -1,76 +1,89 @@
 # impostoCalc
-![Java](https://img.shields.io/badge/Java-17-blue?style=for-the-badge&logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=for-the-badge&logo=spring)
-![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-3.x-blue?style=for-the-badge&logo=spring)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue?style=for-the-badge&logo=postgresql)
-![Docker](https://img.shields.io/badge/Docker-24.0.2-blue?style=for-the-badge&logo=docker)
-![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-✔️-black?style=for-the-badge&logo=github)
-![Swagger](https://img.shields.io/badge/Swagger-3.0-green?style=for-the-badge&logo=swagger)
-![JWT](https://img.shields.io/badge/JWT-0.11.5-orange?style=for-the-badge&logo=json-web-tokens)
-![Maven](https://img.shields.io/badge/Maven-3.8.1-red?style=for-the-badge&logo=apache-maven)
-![JUnit](https://img.shields.io/badge/JUnit-5.8.2-green?style=for-the-badge&logo=junit5)
-![Mockito](https://img.shields.io/badge/Mockito-4.5.1-blue?style=for-the-badge&logo=mockito)
 
-API RESTful para gerenciamento e cálculo de impostos no Brasil. Desenvolvida com **Java 17**, **Spring Boot**, **Spring Security**, e integração com **Docker** e **GitHub Actions** (em ajustes). **Princípios adotados:** Clean Code, SOLID, POO.
+![Java](https://img.shields.io/badge/Java-17-blue?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=for-the-badge&logo=springboot)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-✔️-blue?style=for-the-badge&logo=docker)
+![Podman Compose](https://img.shields.io/badge/Podman--Compose-1.x-purple?style=for-the-badge&logo=podman)
+![LocalStack](https://img.shields.io/badge/LocalStack-3.x-purple?style=for-the-badge&logo=amazon-aws)
+![AWS](https://img.shields.io/badge/AWS-✔️-orange?style=for-the-badge&logo=amazon-aws)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=for-the-badge&logo=githubactions)
+![Swagger](https://img.shields.io/badge/Swagger-UI-green?style=for-the-badge&logo=swagger)
+![JWT](https://img.shields.io/badge/JWT-Auth-yellow?style=for-the-badge&logo=jsonwebtokens)
+![JUnit](https://img.shields.io/badge/JUnit-5-red?style=for-the-badge&logo=java)
+![Mockito](https://img.shields.io/badge/Mockito-✔️-green?style=for-the-badge&logo=java)
 
 ---
 
-## 🔍 Visão Geral
-A API foi desenvolvida para gerenciar e calcular impostos no Brasil. Ela permite:
-- Gerenciar tipos de impostos (ICMS, ISS, IPI, etc.).
-- Calcular o valor do imposto com base no tipo e no valor base fornecido.
-- Autenticar e autorizar usuários utilizando JWT.
-- Restringir o acesso a endpoints sensíveis com base no papel do usuário (`USER` ou `ADMIN`).
+## Índice
+- [Visão Geral](#visão-geral)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Pré-requisitos](#pré-requisitos)
+- [Execução do Projeto](#execução-do-projeto)
+- [Documentação da API](#documentação-da-api)
+- [Endpoints](#endpoints)
+- [Integração AWS](#integração-aws)
+- [Containerização](#containerização)
+- [CI/CD](#cicd)
+- [Testes via Swagger](#testes-via-swagger)
+- [Contribuição](#contribuição)
+---
+
+## Visão Geral
+
+API RESTful para gerenciamento e cálculo de impostos no Brasil. Desenvolvida com **Java 17**, **Spring Boot**, **Spring Security**, e integração com **Docker** e **GitHub Actions**.
+
+Principais funcionalidades:
+- Gerenciamento de tipos de impostos (ICMS, ISS, IPI)
+- Cálculo automático de impostos
+- Autenticação JWT com controle de acesso
+- Integração com AWS via LocalStack
 - Documentação interativa via Swagger
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
-| Categoria          | Ferramentas                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| Backend            | [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html), [Spring Boot](https://spring.io/projects/spring-boot), [Spring Data JPA](https://spring.io/projects/spring-data-jpa), [Spring Security](https://spring.io/projects/spring-security) |
-| Banco de Dados     | [PostgreSQL](https://www.postgresql.org/)                                   |
-| Autenticação       | [JWT](https://jwt.io/)                                                     |
-| Testes             | [JUnit 5](https://junit.org/junit5/), [Mockito](https://site.mockito.org/), [JaCoCo](https://www.eclemma.org/jacoco/) |
-| Containerização    | [Docker](https://www.docker.com/), [Maven Jib Plugin](https://github.com/GoogleContainerTools/jib) |
-| CI/CD              | [GitHub Actions](https://github.com/features/actions)                      |
-| Documentação       | [Swagger](https://swagger.io/)                                              |
-| Build              | [Maven](https://maven.apache.org/)                                         |
+## Tecnologias Utilizadas
+
+| Categoria         | Ferramentas                                                                 |
+|-------------------|----------------------------------------------------------------------------|
+| Backend           | Java 17, Spring Boot, Spring Data JPA, Spring Security                      |
+| Banco de Dados    | PostgreSQL                                                                  |
+| Autenticação      | JWT                                                                         |
+| Testes            | JUnit 5, Mockito, JaCoCo                                                    |
+| Containerização   | Docker, Podman, Maven Jib Plugin                                            |
+| Orquestração      | podman-compose, docker-compose                                              |
+| CI/CD             | GitHub Actions                                                              |
+| Documentação      | Swagger                                                                     |
+| AWS (Simulado)    | LocalStack (EC2, S3, IAM)                                                   |
 
 ---
-## Funcionalidades
-- ✅ **Gerenciamento de impostos** (CRUD de tipos como ICMS, ISS, IPI).
-- 🧮 **Cálculo automático** de impostos com base na alíquota.
-- 🔒 **Autenticação JWT** com roles (`USER` e `ADMIN`).
-- 📚 **Documentação interativa** via Swagger.
-- 🐳 **Containerização** via Docker (configuração inicial).
-- 🤖 **CI/CD** com GitHub Actions (em ajustes).
-
----
-
-## Instruções para Executar o Código
-
-## Pré-requisitos
+### Pré-requisitos
 Antes de executar o projeto, certifique-se de ter:
-- [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) instalado.
-- [Maven](https://maven.apache.org/download.cgi) instalado.
-- [PostgreSQL](https://www.postgresql.org/download/) configurado e rodando
+- [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+- [Maven](https://maven.apache.org/download.cgi)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- [Docker](https://www.docker.com/) / [Podman](https://podman.io/) (opcional)
 
+## Execução do Projeto
 
-## 🚀 Executando o Projeto
-1. **Clone o repositório:**
+1. Clone o repositório:
+
 ```bash
-        git clone https://github.com/GabriellyZup/impostoCalc.git
-        cd impostoCalc
+git clone https://github.com/GabriellyZup/impostoCalc.git
+cd impostoCalc
 ```
+2. Configure o arquivo .env:
 
-2. **Configure as variáveis de ambiente:**
-   Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-``` env
-     SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/impostoCalc
-     SPRING_DATASOURCE_USERNAME=postgres
-     SPRING_DATASOURCE_PASSWORD=postgres
-     JWT_SECRET=secret-key-123456
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/impostoCalc
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+JWT_SECRET=secret-key-123456
+Execute com Maven:
+```
+```bash
+mvn spring-boot:run
+A aplicação estará disponível em: http://localhost:8081
 ```
 
 3. **Execute:**
@@ -80,7 +93,7 @@ Antes de executar o projeto, certifique-se de ter:
 
 4. A aplicação estará disponível em: [http://localhost:8081](http://localhost:8081)
 
-## 📚 Documentação da API:
+## Documentação da API:
 Acesse o Swagger em: [http://localhost:8081/swagger-ui](http://localhost:8081/swagger-ui)
 
 ## Testando a API
@@ -99,7 +112,7 @@ Acesse o Swagger em: [http://localhost:8081/swagger-ui](http://localhost:8081/sw
 ## Exemplos de Entrada e Saída
 
 
-## 🔐 Endpoints Principais
+## Endpoints Principais
 
 ### Autenticação
 | Método | Endpoint           | Descrição                          | Acesso    |
@@ -240,16 +253,42 @@ Retorna os detalhes de um tipo de imposto específico pelo ID.
           "aliquota": 18.0,
           "valorImposto": 180.0
         }
-   ```
-# 🐳 Containerização
+```
+
+## Estrutura de Integração AWS (EC2, S3, IAM)
+
+O projeto possui classes de configuração, service e controller para EC2, S3 e IAM, usando AWS SDK v2. Os endpoints estão disponíveis em `/aws/ec2`, `/aws/s3`, `/aws/iam` e usam LocalStack por padrão.
+
+**Exemplo de endpoints:**
+```
+Método	Endpoint	       Descrição
+GET	/aws/ec2/instances  Lista instâncias EC2
+GET	/aws/s3/buckets	    Lista buckets S3
+GET	/aws/iam/users	    Lista usuários IAM
+```
+
+**Configuração de endpoints e credenciais AWS:**
+
+No arquivo `.env` ou `application.properties`:
+
+```properties
+aws.region=us-east-1
+aws.access-key=test
+aws.secret-key=test
+aws.s3.endpoint=http://localstack:4566
+aws.ec2.endpoint=http://localstack:4566
+aws.iam.endpoint=http://localstack:4566
+
+
+## Containerização
 O projeto usa o **Maven Jib Plugin** para construir imagens OCI (compatíveis com Podman/Docker):
 
-## Build da imagem:
+### Build da imagem:
 ```bash
         mvn compile jib:dockerBuild -Dimage=impostocalc:latest
 ```
 
-## Execute com Podman:
+### Execute com Podman:
 
 
 ```yaml
@@ -278,12 +317,12 @@ services:
 
 
 
-# 🤖 CI/CD (GitHub Actions)
+## CI/CD (GitHub Actions)
 O fluxo de CI inclui:
 - Testes com PostgreSQL em container
 - Build da aplicação
 - Cobertura de testes via JaCoCo
-## Arquivo: .github/workflows/ci.yml
+### Arquivo: .github/workflows/ci.yml
 ```yaml
         name: CI
 
@@ -301,30 +340,31 @@ O fluxo de CI inclui:
                   distribution: 'temurin'
               - name: Build with Maven
                 run: mvn clean install
-  ```
+```                
+                
+                
 
-# ⁉️ Problemas Conhecidos
-- **Containerização**: A integração com PostgreSQL via Docker requer ajustes nas variáveis de ambiente.
-- **CI/CD**: Testes end-to-end ainda não implementados.
 
----
 
-## Contribuição
 
-Para contribuir com o projeto, siga os passos abaixo:
 
-### Faça um fork do projeto
 
-### Crie uma branch:
-```bash
-        git checkout -b feature/nova-feature
-```
 
-### Commit suas mudanças:
-```bash
-        git commit -m 'Adiciona nova feature'
-```
 
-### Push para a branch:
-```bash
-        git push origin feature/nova-feature    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
