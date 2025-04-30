@@ -1,4 +1,4 @@
-name: Java CI with PostgreSQL
+name: CI/CD Java + Podman Compose + LocalStack
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:15
@@ -24,7 +23,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -38,8 +36,73 @@ jobs:
       - name: Build and run unit tests with Maven
         run: mvn clean test
 
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: impostoCalc-jar
           path: target/impostoCalc-0.0.1-SNAPSHOT.jar
+
+  build-deploy:
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: impostoCalc-jar
+          path: target
+
+      - name: Set up Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+
+      - name: Build container image (Podman)
+        run: |
+          podman build -t impostocalc:latest .
+
+      - name: Run Podman Compose (LocalStack + DB + App)
+        run: |
+          pip install podman-compose
+          podman-compose -f podman-compose.yml up -d
+          sleep 30
+          podman-compose -f podman-compose.yml ps
+
+      # (Opcional) Teste de healthcheck da aplicação
+      - name: Check app health
+        run: |
+          curl --fail http://localhost:8081/swagger-ui || exit 1
+
+      # (Opcional) Notificações por email
+      # - name: Send notification (success)
+      #   if: success()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: ${{ secrets.SMTP_SERVER }}
+      #     server_port: ${{ secrets.SMTP_PORT }}
+      #     username: ${{ secrets.EMAIL_FROM }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: "Deploy succeeded"
+      #     to: ${{ secrets.EMAIL_TO }}
+      #     from: ${{ secrets.EMAIL_FROM }}
+      #     body: "O deploy do impostoCalc foi realizado com sucesso!"
+
+      # - name: Send notification (failure)
+      #   if: failure()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: ${{ secrets.SMTP_SERVER }}
+      #     server_port: ${{ secrets.SMTP_PORT }}
+      #     username: ${{ secrets.EMAIL_FROM }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: "Deploy failed"
+      #     to: ${{ secrets.EMAIL_TO }}
+      #     from: ${{ secrets.EMAIL_FROM }}
+      #     body: "O deploy do impostoCalc falhou. Verifique o pipeline."
+

@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+*.env
+*.env.local
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,3 +34,4 @@ build/
 ### VS Code ###
 .vscode/
 .env/
+.env.local
